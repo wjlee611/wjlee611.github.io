@@ -16,7 +16,7 @@ jobs:
       - name: Install and Build
         run: |
           npm i
-          npm run build & touch ./out/.nojekyll
+          npm run build
       
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
