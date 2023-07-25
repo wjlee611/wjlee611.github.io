@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Home() {
+export default function Blog() {
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24`}
@@ -13,7 +13,7 @@ export default function Home() {
         priority
       />
       <h1 className="shadow-md rounded-full text-2xl py-2 px-10">
-        [/] 공사중 입니다!
+        [/blog] 공사중 입니다!
       </h1>
     </main>
   );
