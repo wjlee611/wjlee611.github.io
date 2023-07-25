@@ -1,6 +1,11 @@
+import clsWrapper from "@/utils/class-wrapper";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
+  const [toggle, setToggle] = useState(false);
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24`}
@@ -12,9 +17,38 @@ export default function Home() {
         height={180}
         priority
       />
-      <h1 className="shadow-md rounded-full text-2xl py-2 px-10">
-        [/] 공사중 입니다!
-      </h1>
+      <div className="relative flex justify-center">
+        <button
+          className="shadow-md rounded-full text-2xl py-2 px-10"
+          onClick={() => setToggle((prev) => !prev)}
+        >
+          [/] 공사중 입니다!
+        </button>
+        <ul
+          className={clsWrapper(
+            "absolute bottom-14 mx-auto bg-slate-600 bg-opacity-50 p-5 space-y-3 rounded-md transition-all",
+            toggle ? "" : "translate-y-4 opacity-0"
+          )}
+        >
+          <Link href="/">
+            <li className="text-lg text-white cursor-pointer w-32 flex justify-between group">
+              <span>Home</span>
+              <span className="-translate-x-3 group-hover:translate-x-0 transition-transform">
+                &raquo;
+              </span>
+            </li>
+          </Link>
+
+          <Link href="/blog">
+            <li className="text-lg text-white cursor-pointer w-32 flex justify-between group">
+              <span>Blog</span>
+              <span className="-translate-x-3 group-hover:translate-x-0 transition-transform">
+                &raquo;
+              </span>
+            </li>
+          </Link>
+        </ul>
+      </div>
     </main>
   );
 }
