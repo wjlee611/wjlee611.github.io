@@ -5,6 +5,10 @@ on:
   push:
     branches: ["main"]
 
+# For deploy
+permissions:
+  contents: write
+
 jobs:
   # Build job
   build:
