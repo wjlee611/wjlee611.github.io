@@ -5,8 +5,7 @@
   "homepage": "https://wjlee611.github.io/",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export",
-    "serve": "npx http-server out",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
