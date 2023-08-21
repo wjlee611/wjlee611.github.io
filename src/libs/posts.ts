@@ -52,6 +52,17 @@ export const getAllPosts = () => {
   return postPaths.reduce<Post[]>((ac, postPath) => {
     const post = parsePost(postPath);
     if (!post) return ac;
+    if (post.slug.endsWith("index")) return ac;
+
+    return [...ac, post];
+  }, []);
+};
+
+export const getAllCategories = () => {
+  const postPaths: string[] = sync(`${POSTS_PATH}/**/index.mdx`);
+  return postPaths.reduce<Post[]>((ac, postPath) => {
+    const post = parsePost(postPath);
+    if (!post) return ac;
 
     return [...ac, post];
   }, []);
