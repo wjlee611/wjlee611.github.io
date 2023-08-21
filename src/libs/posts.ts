@@ -58,6 +58,12 @@ export const getAllPosts = () => {
   }, []);
 };
 
+export const getPosts = (category: string) => {
+  const posts = getAllPosts();
+
+  return posts.filter((v) => v.slug.split("/")[0] === category);
+};
+
 export const getAllCategories = () => {
   const postPaths: string[] = sync(`${POSTS_PATH}/**/index.mdx`);
   return postPaths.reduce<Post[]>((ac, postPath) => {

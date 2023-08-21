@@ -1,13 +1,11 @@
 import Layout from "@/components/common/Layout";
-import { getCategories } from "@/libs/categories";
-import { Post } from "@/libs/posts";
-import Image from "next/image";
+import { Post, getAllCategories } from "@/libs/posts";
 import Link from "next/link";
 
 export const getStaticProps = () => {
   return {
     props: {
-      categories: getCategories(),
+      categories: getAllCategories(),
     },
   };
 };

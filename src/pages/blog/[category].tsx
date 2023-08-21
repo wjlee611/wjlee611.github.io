@@ -1,14 +1,13 @@
 import Layout from "@/components/common/Layout";
-import { getCategories, getPosts } from "@/libs/categories";
-import { Post } from "@/libs/posts";
+import { Post, getAllCategories, getPosts } from "@/libs/posts";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 
 export const getStaticPaths: GetStaticPaths = () => {
-  const categories = getCategories();
+  const categories = getAllCategories();
 
   return {
-    paths: categories.map((cat) => "/blog/" + cat),
+    paths: categories.map((cat) => "/blog/" + cat.slug.split("/")[0]),
     fallback: "blocking",
   };
 };
