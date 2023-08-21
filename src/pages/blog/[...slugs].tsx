@@ -2,6 +2,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { Post, getAllPosts } from "../../libs/posts";
 import { serializeMdx } from "@/libs/mdx";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
+import Layout from "@/components/common/Layout";
 
 export const getStaticPaths: GetStaticPaths = () => {
   const posts = getAllPosts();
@@ -41,17 +42,19 @@ interface IPostPage {
 
 export default function PostPage({ post, mdx }: IPostPage) {
   return (
-    <div className="flex flex-col">
-      <h1>{post.title}</h1>
-      <h3>{post.description}</h3>
-      <span>{post.date}</span>
-      <span>est. {post.readingMinutes} min</span>
-      <MDXRemote {...mdx} />
-      <ul className="flex space-x-3">
-        {post.tags.map((tag, i) => (
-          <li key={i}>{tag}</li>
-        ))}
-      </ul>
-    </div>
+    <Layout>
+      <div className="flex flex-col py-16">
+        <h1>{post.title}</h1>
+        <h3>{post.description}</h3>
+        <span>{post.date}</span>
+        <span>est. {post.readingMinutes} min</span>
+        <MDXRemote {...mdx} />
+        <ul className="flex space-x-3">
+          {post.tags.map((tag, i) => (
+            <li key={i}>{tag}</li>
+          ))}
+        </ul>
+      </div>
+    </Layout>
   );
 }

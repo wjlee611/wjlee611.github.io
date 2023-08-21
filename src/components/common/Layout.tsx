@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { motion, usePresence } from "framer-motion";
+import { ReactNode, useEffect } from "react";
 
 interface ILayout {
   children: ReactNode;
@@ -7,18 +7,22 @@ interface ILayout {
 
 export default function Layout({ children }: ILayout) {
   return (
-    <motion.div
-      initial={{ scale: 1.3, opacity: 0 }}
+    <motion.main
+      className="w-full h-full pt-16 px-16"
+      initial={{ scale: 1.1, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 1.3, opacity: 0 }}
+      exit={{ scale: 1.2, opacity: 0 }}
       transition={{
         scale: {
           ease: "circOut",
-          duration: 0.5,
+          duration: 0.2,
+        },
+        opacity: {
+          duration: 0.1,
         },
       }}
     >
       {children}
-    </motion.div>
+    </motion.main>
   );
 }
