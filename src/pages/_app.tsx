@@ -9,7 +9,7 @@ import { AnimatePresence } from "framer-motion";
 import Header from "@/components/common/Header";
 import clsWrapper from "@/utils/class-wrapper";
 import { useEffect, useState } from "react";
-import { Router } from "next/router";
+import { Router, useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 const progress = new ProgressBar({
@@ -29,7 +29,37 @@ Router.events.on("routeChangeError", progress.finish);
 
 dayjs.locale("ko");
 
-export default function App({ Component, pageProps, router }: AppProps) {
+// timer
+let debounceTimer: any = null;
+
+export default function App({
+  Component,
+  pageProps,
+  router: routerProp,
+}: AppProps) {
+  const router = useRouter();
+
+  const handleBeforePopState = ({ url, as, options }: any) => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+      debounceTimer = null;
+    }
+
+    // 0.2초간 router 이동이 없을 때 이동함.
+    debounceTimer = setTimeout(() => {
+      debounceTimer = null;
+      router.push(url, as, options);
+    }, 200);
+
+    // Allow the route change
+    return false;
+  };
+
+  useEffect(() => {
+    router.beforePopState(handleBeforePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={clsWrapper(inter.className)}>
       <Head>
@@ -42,7 +72,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
           initial={false}
           onExitComplete={() => window.scrollTo(0, 0)}
         >
-          <Component {...pageProps} key={router.asPath} />
+          <Component {...pageProps} key={routerProp.asPath} />
         </AnimatePresence>
       </div>
     </div>
