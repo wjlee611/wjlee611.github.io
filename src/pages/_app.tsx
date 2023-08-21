@@ -23,23 +23,30 @@ if (typeof window !== "undefined") {
   progress.start();
   progress.finish();
 }
-Router.events.on("routeChangeStart", progress.start);
-Router.events.on("routeChangeComplete", progress.finish);
-Router.events.on("routeChangeError", progress.finish);
 
 dayjs.locale("ko");
 
 // timer
 let debounceTimer: any = null;
+let onProgress: boolean = false;
 
-export default function App({
-  Component,
-  pageProps,
-  router: routerProp,
-}: AppProps) {
-  const router = useRouter();
+export default function App({ Component, pageProps, router }: AppProps) {
+  const start = () => {
+    if (onProgress) {
+      return;
+    }
+    progress.start();
+    onProgress = true;
+  };
+
+  const finish = () => {
+    progress.finish();
+    onProgress = false;
+  };
 
   const handleBeforePopState = ({ url, as, options }: any) => {
+    start();
+
     if (debounceTimer) {
       clearTimeout(debounceTimer);
       debounceTimer = null;
@@ -60,6 +67,18 @@ export default function App({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    router.events.on("routeChangeStart", start);
+    router.events.on("routeChangeComplete", finish);
+    router.events.on("routeChangeError", finish);
+    return () => {
+      router.events.off("routeChangeStart", start);
+      router.events.off("routeChangeComplete", finish);
+      router.events.off("routeChangeError", finish);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
+
   return (
     <div className={clsWrapper(inter.className)}>
       <Head>
@@ -72,7 +91,7 @@ export default function App({
           initial={false}
           onExitComplete={() => window.scrollTo(0, 0)}
         >
-          <Component {...pageProps} key={routerProp.asPath} />
+          <Component {...pageProps} key={router.asPath} />
         </AnimatePresence>
       </div>
     </div>
