@@ -8,7 +8,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 
   return {
     paths: posts.map((post) => ({ params: { slugs: post.slug.split("/") } })),
-    fallback: false,
+    fallback: "blocking",
   };
 };
 
