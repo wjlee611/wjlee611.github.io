@@ -11,6 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@badrap/bar-of-progress": "^0.2.2",
     "@types/glob": "^8.1.0",
     "@types/node": "20.4.4",
     "@types/react": "18.2.16",
