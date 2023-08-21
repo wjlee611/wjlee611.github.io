@@ -1,5 +1,7 @@
 import "@/styles/globals.css";
 import ProgressBar from "@badrap/bar-of-progress";
+import "dayjs/locale/ko";
+import dayjs from "dayjs";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
@@ -21,6 +23,8 @@ if (typeof window !== "undefined") {
 Router.events.on("routeChangeStart", () => progress.start());
 Router.events.on("routeChangeComplete", () => progress.finish());
 Router.events.on("routeChangeError", () => progress.finish());
+
+dayjs.locale("ko");
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
