@@ -21,6 +21,7 @@
     "dayjs": "^1.11.9",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.12",
+    "framer-motion": "^10.16.0",
     "gh-pages": "^5.0.0",
     "glob": "^10.3.3",
     "gray-matter": "^4.0.3",
