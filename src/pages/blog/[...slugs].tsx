@@ -1,5 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import { getAllPosts } from "../../libs/posts";
+import { serializeMdx } from "@/libs/mdx";
+import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 
 export const getStaticPaths: GetStaticPaths = () => {
   const posts = getAllPosts();
@@ -10,7 +12,7 @@ export const getStaticPaths: GetStaticPaths = () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slugs } = params as { slugs: string[] };
 
   const slug = `${[...slugs].join("/")}`;
@@ -22,13 +24,15 @@ export const getStaticProps: GetStaticProps = ({ params }) => {
     };
   }
 
+  const mdx = await serializeMdx(post.content);
+
   return {
     props: {
-      slug,
+      mdx,
     },
   };
 };
 
-export default function PostPage({ slug }: { slug: string }) {
-  return <div>{slug}</div>;
+export default function PostPage({ mdx }: { mdx: MDXRemoteSerializeResult }) {
+  return <MDXRemote {...mdx} />;
 }

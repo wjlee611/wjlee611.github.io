@@ -1,4 +1,4 @@
-import { getAllPosts } from "../../../libs/posts";
+import { Post, getAllPosts } from "../../../libs/posts";
 
 export const getStaticProps = () => {
   return {
@@ -8,11 +8,17 @@ export const getStaticProps = () => {
   };
 };
 
-export default function PostsPage({ posts }: { posts: { slug: string }[] }) {
+interface IPostsPage {
+  posts: Post[];
+}
+
+export default function PostsPage({ posts }: IPostsPage) {
   return (
     <ul>
       {posts.map((post, i) => (
-        <li key={i}>{post.slug}</li>
+        <li key={i}>
+          {post.title} {post.slug}
+        </li>
       ))}
     </ul>
   );

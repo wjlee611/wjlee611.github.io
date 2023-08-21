@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import "bar-of-progress.css";
+@import "prose.css";
 
 :root {
   --foreground-rgb: 0, 0, 0;
