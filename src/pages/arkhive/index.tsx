@@ -13,7 +13,10 @@ export default function Arkhive() {
           height={180}
           priority
         />
-        <Link href="/arkhive/privacy">개인정보처리방침</Link>
+        <ul className="flex flex-col space-y-5">
+          <Link href="/arkhive/privacy">개인정보처리방침</Link>
+          <Link href="/arkhive/beta">베타 테스트</Link>
+        </ul>
         <div className="relative flex justify-center">
           <span className="shadow-md rounded-full text-2xl py-2 px-10">
             [/arkhive] 공사중 입니다!

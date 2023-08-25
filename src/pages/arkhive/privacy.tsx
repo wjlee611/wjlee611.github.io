@@ -1,5 +1,4 @@
 import Layout from "@/components/common/Layout";
-import Image from "next/image";
 
 export default function ArkhivePrivacy() {
   return (
