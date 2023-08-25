@@ -10,7 +10,7 @@ export default function Document() {
         <meta name="application-name" content="웅덩이" />
         <meta name="theme-color" content="#009c39" />
       </Head>
-      <body>
+      <body className="scrollbar-hide">
         <Main />
         <NextScript />
       </body>
