@@ -83,13 +83,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
   }, []);
 
   return (
-    <div
-      className={clsWrapper(
-        inter.className,
-        "text-center",
-        onTransition ? "w-screen h-screen overflow-hidden scrollbar-hide" : ""
-      )}
-    >
+    <div className={clsWrapper(inter.className, "text-center")}>
       <Head>
         <title>웅덩이</title>
       </Head>
