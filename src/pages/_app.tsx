@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, AnimateSharedLayout } from "framer-motion";
 import Header from "@/components/common/Header";
 import clsWrapper from "@/utils/class-wrapper";
 import { useEffect, useState } from "react";
@@ -23,6 +23,7 @@ dayjs.locale("ko");
 
 // timer
 let debounceTimer: any = null;
+let transitionTimer: any = null;
 let onProgress: boolean = false;
 
 export default function App({ Component, pageProps, router }: AppProps) {
@@ -32,18 +33,20 @@ export default function App({ Component, pageProps, router }: AppProps) {
     if (onProgress) {
       return;
     }
+
     progress.start();
-    setOnTransition(true);
     onProgress = true;
+    setOnTransition(true);
+    clearTimeout(transitionTimer);
   };
 
   const finish = () => {
     progress.finish();
     onProgress = false;
 
-    setTimeout(() => {
+    transitionTimer = setTimeout(() => {
       setOnTransition(false);
-    }, 410);
+    }, 400);
   };
 
   const handleBeforePopState = ({ url, as, options }: any) => {
@@ -56,9 +59,14 @@ export default function App({ Component, pageProps, router }: AppProps) {
 
     // 0.2초간 router 이동이 없을 때 이동함.
     debounceTimer = setTimeout(() => {
+      if (onTransition) {
+        clearTimeout(debounceTimer);
+        debounceTimer = null;
+        return;
+      }
       debounceTimer = null;
       router.push(url, as, options);
-    }, 210);
+    }, 200);
 
     // Allow the route change
     return false;
@@ -78,6 +86,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
       router.events.off("routeChangeComplete", finish);
       router.events.off("routeChangeError", finish);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   return (
@@ -95,7 +104,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
       <AnimatePresence
         mode="wait"
         initial={false}
-        presenceAffectsLayout
+        presenceAffectsLayout={true}
         onExitComplete={() => window.scrollTo(0, 0)}
       >
         <Component {...pageProps} key={router.asPath} />

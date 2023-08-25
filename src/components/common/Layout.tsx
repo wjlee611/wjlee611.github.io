@@ -15,7 +15,7 @@ export default function Layout({ children }: ILayout) {
       transition={{
         scale: {
           ease: "circOut",
-          duration: 0.2,
+          duration: 0.18,
         },
         opacity: {
           duration: 0.1,
