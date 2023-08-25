@@ -80,7 +80,13 @@ export default function App({ Component, pageProps, router }: AppProps) {
   }, [router]);
 
   return (
-    <div className={clsWrapper(inter.className, "text-center")}>
+    <div
+      className={clsWrapper(
+        inter.className,
+        "text-center",
+        onProgress ? "overflow-hidden" : ""
+      )}
+    >
       <Head>
         <title>웅덩이</title>
       </Head>
