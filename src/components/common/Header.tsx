@@ -15,6 +15,7 @@ export default function Header() {
         <nav className="h-full flex space-x-8 overflow-hidden">
           <HeaderNavBtn href="/" text="Portfolio" />
           <HeaderNavBtn href="/blog" text="Blog" />
+          <HeaderNavBtn href="/arkhive" text="Arkhive" />
         </nav>
       </header>
     </AnimatePresence>
