@@ -80,20 +80,18 @@ export default function App({ Component, pageProps, router }: AppProps) {
   }, [router]);
 
   return (
-    <div className={clsWrapper(inter.className)}>
+    <div className={clsWrapper(inter.className, "text-center")}>
       <Head>
         <title>웅덩이</title>
       </Head>
       <Header />
-      <div className="w-screen h-screen overflow-hidden">
-        <AnimatePresence
-          mode="wait"
-          initial={false}
-          onExitComplete={() => window.scrollTo(0, 0)}
-        >
-          <Component {...pageProps} key={router.asPath} />
-        </AnimatePresence>
-      </div>
+      <AnimatePresence
+        mode="wait"
+        initial={false}
+        onExitComplete={() => window.scrollTo(0, 0)}
+      >
+        <Component {...pageProps} key={router.asPath} />
+      </AnimatePresence>
     </div>
   );
 }

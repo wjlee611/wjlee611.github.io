@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <Layout>
-      <div className="h-full flex flex-col items-center justify-between py-16">
+      <div className="flex flex-col items-center justify-between py-16">
         <Image
           src="/images/icon_circle.png"
           alt="웅덩이 로고"

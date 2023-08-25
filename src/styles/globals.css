@@ -50,9 +50,7 @@ body,
 }
 
 body {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
   color: rgb(var(--foreground-rgb));
   background-repeat: no-repeat;
   background: linear-gradient(
@@ -61,4 +59,9 @@ body {
     rgb(var(--background-end-rgb)),
     rgb(var(--background-end-rgb))
   );
+}
+
+span {
+  word-break: keep-all;
+  text-align: start;
 }

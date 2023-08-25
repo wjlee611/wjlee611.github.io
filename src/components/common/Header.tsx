@@ -55,9 +55,9 @@ export default function Header() {
         <motion.nav
           className="w-80 flex flex-col fixed right-0 left-0 mx-auto backdrop-blur bg-white bg-opacity-20 rounded-md px-4 divide-y divide-white border-2 border-white border-opacity-30 z-20"
           key="header_nav"
-          initial={{ top: 0, opacity: 0 }}
-          animate={{ top: "4rem", opacity: 1 }}
-          exit={{ top: 0, opacity: 0 }}
+          initial={{ top: "2rem", opacity: 0 }}
+          animate={{ top: "5rem", opacity: 1 }}
+          exit={{ top: "2rem", opacity: 0 }}
         >
           <HeaderNavBtn
             href="/"

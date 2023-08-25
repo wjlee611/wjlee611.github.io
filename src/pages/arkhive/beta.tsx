@@ -1,11 +1,10 @@
 import ArkhiveContainer from "@/components/arkhive/common/ArkhiveContainer";
 import Layout from "@/components/common/Layout";
-import Link from "next/link";
 
 export default function ArkhiveBeta() {
   return (
     <Layout>
-      <div className="h-fit flex flex-col items-center py-16">
+      <div className="flex flex-col items-center py-16">
         <h1 className="shadow-md rounded-full text-2xl py-2 px-10 mb-10 backdrop-blur">
           베타 테스트
         </h1>
@@ -18,7 +17,7 @@ export default function ArkhiveBeta() {
             <a
               target="_blank"
               href="https://www.buymeacoffee.com/wjlee611m"
-              className="bg-yellow-500 bg-opacity-70 rounded py-1px px-1"
+              className="bg-yellow-500 bg-opacity-70 rounded py-1px px-1 text-white"
             >
               여기
             </a>
@@ -36,8 +35,10 @@ export default function ArkhiveBeta() {
             ! 참고사항
           </span>
           <span>
-            선착순 90명 입니다. 베타 테스트에 참가 못할 수도 있는 점 양해
-            부탁드립니다.
+            내부 테스터 인원수에 제한이 있어 선착순 90명만 참가 가능합니다.
+          </span>
+          <span>
+            따라서, 베타 테스트에 참가 못할 수도 있는 점 양해 부탁드립니다.
           </span>
         </ArkhiveContainer>
         <ArkhiveContainer title="베타 테스터 혜택">

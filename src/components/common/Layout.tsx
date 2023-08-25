@@ -8,7 +8,7 @@ interface ILayout {
 export default function Layout({ children }: ILayout) {
   return (
     <motion.main
-      className="w-full h-full pt-16 px-16 overflow-y-scroll scrollbar-hide"
+      className="inline-block w-full relative pt-16 px-8 md:px-16 max-w-4xl 2xl:max-w-5xl"
       initial={{ scale: 1.1, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 1.2, opacity: 0 }}

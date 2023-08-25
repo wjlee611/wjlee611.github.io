@@ -72,7 +72,7 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/typography"),
-    require("tailwind-scrollbar-hide"),
+    // require("tailwind-scrollbar-hide"),
     ({ addComponents, addUtilities }) => {
       addComponents({
         ".text-primary": {
