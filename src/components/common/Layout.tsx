@@ -1,5 +1,5 @@
-import { motion, usePresence } from "framer-motion";
-import { ReactNode, useEffect } from "react";
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 interface ILayout {
   children: ReactNode;

@@ -23,7 +23,7 @@ export default function Header() {
 
   return (
     <AnimatePresence>
-      <header className="fixed top-0 left-0 w-screen h-16 flex justify-between md:justify-start px-10 backdrop-blur bg-white bg-opacity-20 z-50">
+      <header className="fixed top-0 left-0 right-0 mx-anuo w-screen h-16 flex justify-between md:justify-start px-10 backdrop-blur bg-white bg-opacity-20 z-50">
         <Link
           href="/"
           className="h-16 aspect-square flex justify-center items-center text-3xl mr-20 select-none cursor-pointer"
