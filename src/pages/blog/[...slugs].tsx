@@ -43,7 +43,7 @@ interface IPostPage {
 export default function PostPage({ post, mdx }: IPostPage) {
   return (
     <Layout>
-      <div className="flex flex-col py-16">
+      <div className="prose flex flex-col py-16 ">
         <h1>{post.title}</h1>
         <h3>{post.description}</h3>
         <span>{post.date}</span>
