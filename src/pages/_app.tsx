@@ -19,10 +19,27 @@ const progress = new ProgressBar({
   delay: 0,
 });
 
+const start = () => {
+  if (onProgress) {
+    return;
+  }
+  progress.start();
+  onProgress = true;
+};
+
+const finish = () => {
+  progress.finish();
+  onProgress = false;
+};
+
 if (typeof window !== "undefined") {
   progress.start();
   progress.finish();
 }
+
+Router.events.on("routeChangeStart", start);
+Router.events.on("routeChangeComplete", finish);
+Router.events.on("routeChangeError", finish);
 
 dayjs.locale("ko");
 
@@ -31,18 +48,7 @@ let debounceTimer: any = null;
 let onProgress: boolean = false;
 
 export default function App({ Component, pageProps, router }: AppProps) {
-  const start = () => {
-    if (onProgress) {
-      return;
-    }
-    progress.start();
-    onProgress = true;
-  };
-
-  const finish = () => {
-    progress.finish();
-    onProgress = false;
-  };
+  const [onTransition, setOnTransition] = useState(false);
 
   const handleBeforePopState = ({ url, as, options }: any) => {
     start();
@@ -55,6 +61,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
     // 0.2초간 router 이동이 없을 때 이동함.
     debounceTimer = setTimeout(() => {
       debounceTimer = null;
+      setOnTransition(true);
       router.push(url, as, options);
     }, 200);
 
@@ -63,28 +70,24 @@ export default function App({ Component, pageProps, router }: AppProps) {
   };
 
   useEffect(() => {
+    if (onTransition) {
+      setTimeout(() => {
+        setOnTransition(false);
+      }, 400);
+    }
+  }, [onTransition]);
+
+  useEffect(() => {
     router.beforePopState(handleBeforePopState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    router.events.on("routeChangeStart", start);
-    router.events.on("routeChangeComplete", finish);
-    router.events.on("routeChangeError", finish);
-    return () => {
-      router.events.off("routeChangeStart", start);
-      router.events.off("routeChangeComplete", finish);
-      router.events.off("routeChangeError", finish);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
 
   return (
     <div
       className={clsWrapper(
         inter.className,
         "text-center",
-        onProgress ? "overflow-hidden" : ""
+        onTransition ? "w-screen h-screen overflow-hidden scrollbar-hide" : ""
       )}
     >
       <Head>
