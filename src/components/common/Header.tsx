@@ -25,6 +25,7 @@ export default function Header() {
     <AnimatePresence>
       <header className="fixed top-0 left-0 right-0 mx-anuo w-screen h-16 flex justify-between md:justify-start px-10 backdrop-blur bg-white bg-opacity-20 z-50">
         <Link
+          onClick={() => setIsOpen(false)}
           href="/"
           className="h-16 aspect-square flex justify-center items-center text-3xl mr-20 select-none cursor-pointer"
         >
@@ -44,6 +45,7 @@ export default function Header() {
       </header>
       {isOpen ? (
         <motion.div
+          onClick={() => setIsOpen(false)}
           className="w-screen h-screen fixed top-0 right-0 z-10 bg-black bg-opacity-20"
           key="header_nav_bg"
           initial={{ opacity: 0 }}

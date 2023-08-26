@@ -38,6 +38,20 @@ export default function ArkhiveBeta() {
             내부 테스터 인원수에 제한이 있어 선착순 90명만 참가 가능합니다.
           </span>
           <span>
+            <span>다만, IOS 배포 시점이 늦어짐에 따라</span>
+            <span className="bg-red-500 text-white rounded-sm px-2">
+              우선적으로 50명
+            </span>
+            <span>만 참가 가능하고,</span>
+          </span>
+          <span>
+            <span>이후 IOS가 배포되면</span>
+            <span className="bg-red-500 text-white rounded-sm px-2">
+              추가로 40명
+            </span>
+            <span>더 참가 가능합니다.</span>
+          </span>
+          <span>
             따라서, 베타 테스트에 참가 못할 수도 있는 점 양해 부탁드립니다.
           </span>
         </ArkhiveContainer>
