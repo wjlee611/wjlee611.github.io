@@ -94,7 +94,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
       className={clsWrapper(
         inter.className,
         "text-center transition-all",
-        onTransition ? "w-screen h-screen overflow-hidden" : ""
+        onTransition ? "w-screen h-screen overflow-x-hidden" : ""
       )}
     >
       <Head>
