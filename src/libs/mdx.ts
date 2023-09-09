@@ -5,12 +5,13 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
+import remarkBreaks from "remark-breaks";
 
 export const serializeMdx = (source: string) => {
   return serialize(source, {
     parseFrontmatter: true,
     mdxOptions: {
-      remarkPlugins: [remarkToc, remarkGfm],
+      remarkPlugins: [remarkToc, remarkGfm, remarkBreaks],
       rehypePlugins: [
         rehypeSlug,
         rehypeCodeTitles,

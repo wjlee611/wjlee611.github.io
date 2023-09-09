@@ -28,7 +28,7 @@
 
 .prose a {
   @apply text-primary break-words transition-all;
-  @apply decoration-neutral-450 underline-offset-2 hover:decoration-neutral-350;
+  @apply decoration-blue-300 underline-offset-2 hover:decoration-blue-200;
 }
 .prose a:has(strong) {
   @apply decoration-blue-300 decoration-wavy underline-offset-1 hover:decoration-blue-400;
@@ -52,6 +52,10 @@
 }
 .prose pre {
   @apply w-full;
+}
+
+.prose .rehype-code-title {
+  @apply bg-[#2b2b2b] text-white rounded-t-md border-b-2 border-blue-400 px-5 py-2 text-sm font-bold;
 }
 
 /* prose first child, not <TocTop /> */
@@ -81,4 +85,8 @@
 .prose .anchor:hover,
 .prose *:hover > .anchor {
   @apply md:opacity-100;
+}
+
+.prose hr {
+  @apply w-3/4 mx-auto h-[3px] bg-blue-600 bg-opacity-50 rounded-full;
 }
