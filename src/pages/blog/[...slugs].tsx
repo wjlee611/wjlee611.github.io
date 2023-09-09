@@ -43,7 +43,7 @@ interface IPostPage {
 export default function PostPage({ post, mdx }: IPostPage) {
   return (
     <Layout>
-      <div className="prose flex flex-col items-start pb-16">
+      <div className="prose dark:prose-dark flex flex-col items-start pb-16">
         <header className="flex w-full flex-col items-center mb-10">
           <h1 className="text-blue-500">{post.title}</h1>
           <span className="text-blue-500 text-lg">{post.description}</span>

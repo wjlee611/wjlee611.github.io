@@ -1,6 +1,6 @@
 /* common markdown */
 .prose {
-  @apply text-secondary;
+  @apply text-secondary text-start;
 }
 .prose strong,
 .prose h2,

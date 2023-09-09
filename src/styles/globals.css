@@ -26,15 +26,6 @@ body,
   @apply bg-neutral-500/30;
 }
 
-body::-webkit-scrollbar,
-.kbar-scrollbar > div::-webkit-scrollbar {
-  @apply w-3 h-3 bg-[#bdfafa];
-}
-body::-webkit-scrollbar-thumb,
-.kbar-scrollbar > div::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-tr from-blue-500 to-blue-300 rounded-full h-[30%];
-}
-
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 190, 250, 250;
