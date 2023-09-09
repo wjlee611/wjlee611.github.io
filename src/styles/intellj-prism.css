@@ -167,20 +167,20 @@ code.language-css .token.selector > .token.pseudo-element {
 .code-line.inserted,
 .code-line.deleted,
 .code-line.highlight-line {
-  @apply -mx-5 block px-5;
+  @apply block -mx-3 px-3;
 }
 
 .code-line.highlight-line {
   background-color: var(--prism-selection);
   border-color: #cc7832;
-  border-left-width: 6px;
+  /* border-left-width: 6px; */
 }
-.highlight-line > *:first-of-type {
+/* .highlight-line > *:first-of-type {
   margin-left: -6px;
 }
 .highlight-line.line-number::before {
   margin-left: -18px;
-}
+} */
 
 .code-line.highlight-line::selection,
 .code-line.highlight-line *::selection {

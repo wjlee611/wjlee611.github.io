@@ -10,7 +10,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        mypink: "#fe9599",
         neutral: {
           50: "#fafafa",
           100: "#f5f5f5",
@@ -50,6 +49,7 @@ module.exports = {
             "blockquote p:last-of-type::after": false,
             "code::before": false,
             "code::after": false,
+            maxWidth: "100%",
           },
         },
         dark: {

@@ -27,9 +27,9 @@ export default function Header() {
         <Link
           onClick={() => setIsOpen(false)}
           href="/"
-          className="h-16 aspect-square flex justify-center items-center text-3xl mr-20 select-none cursor-pointer"
+          className="h-16 aspect-square flex justify-center items-center text-3xl mr-10 select-none cursor-pointer"
         >
-          💦
+          🫧
         </Link>
         <nav className="h-full hidden md:flex space-x-8 overflow-hidden">
           <HeaderNavBtn href="/" text="Portfolio" />

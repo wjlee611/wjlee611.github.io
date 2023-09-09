@@ -24,7 +24,7 @@ export default function HeaderNavBtn({ href, text, onClick }: IHeaderNavBtn) {
       <Link
         className={clsWrapper(
           "h-full w-full md:w-auto flex items-center transition-colors py-2 md:my-0",
-          isSelect() ? "text-mypink" : "",
+          isSelect() ? "text-blue-500" : "",
           router.asPath === href ? "pointer-events-none" : ""
         )}
         href={href}
@@ -35,7 +35,7 @@ export default function HeaderNavBtn({ href, text, onClick }: IHeaderNavBtn) {
       {isSelect() ? (
         <motion.div
           layoutId="nav_bar"
-          className="hidden md:flex w-full h-[2px] bg-mypink absolute bottom-0 left-0 blur-[2px]"
+          className="hidden md:flex w-full h-[2px] bg-blue-500 absolute bottom-0 left-0 blur-[2px]"
         />
       ) : null}
     </li>

@@ -5,16 +5,15 @@ import dayjs from "dayjs";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
-import { AnimatePresence, AnimateSharedLayout } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import Header from "@/components/common/Header";
 import clsWrapper from "@/utils/class-wrapper";
 import { useEffect, useState } from "react";
-import { Router, useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 const progress = new ProgressBar({
   size: 2,
-  color: "#fe9599",
+  color: "#3b82f6",
   className: "bar-of-progress",
   delay: 0,
 });
