@@ -10,6 +10,7 @@ export default function Home() {
           alt="웅덩이 로고"
           width={180}
           height={180}
+          placeholder="blur"
           priority
         />
         <div className="relative flex justify-center">
