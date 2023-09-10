@@ -82,7 +82,7 @@ export default function BlogToc({ toc }: { toc: Toc }) {
   };
 
   return (
-    <div className="h-fit w-72 hidden lg:flex flex-col overflow-hidden rounded-xl transition-all sticky top-32 bg-blue-400">
+    <div className="w-72 hidden h-fit max-h-[calc(100vh-10rem)] lg:flex flex-col overflow-x-hidden overflow-y-scroll scrollbar-hide rounded-xl transition-all sticky top-32 bg-blue-400">
       {toc.length !== 0 && (
         <div className="">
           <p
