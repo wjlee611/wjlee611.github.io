@@ -36,7 +36,7 @@ const useScroll = (toc: Toc) => {
     function onScroll() {
       if (!headings) return;
 
-      const NAV_TOP = -120;
+      const NAV_TOP = 120;
       const top = window.pageYOffset + scrollMt - NAV_TOP + 1;
 
       let current: typeof currentSectionSlug = undefined;
@@ -82,7 +82,7 @@ export default function BlogToc({ toc }: { toc: Toc }) {
   };
 
   return (
-    <div className="h-fit hidden lg:flex flex-col overflow-hidden rounded-xl transition-all sticky top-32 bg-blue-400">
+    <div className="h-fit w-72 hidden lg:flex flex-col overflow-hidden rounded-xl transition-all sticky top-32 bg-blue-400">
       {toc.length !== 0 && (
         <div className="">
           <p
