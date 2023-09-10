@@ -42,7 +42,7 @@ module.exports = {
         DEFAULT: {
           css: {
             "h2,h3,h4": {
-              "scroll-margin-top": "var(--scroll-mt)",
+              "scroll-margin-top": spacing[28],
             },
             "hr, thead, tbody tr": { borderColor: theme("colors.neutral.300") },
             "blockquote p:first-of-type::before": false,
