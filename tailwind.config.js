@@ -30,8 +30,8 @@ module.exports = {
         },
       },
       dropShadow: {
-        base: "0px 0px 10px rgba(234, 179, 8, 0.3)",
-        "base-bold": "0px 0px 7px rgba(234, 179, 8, 0.7)",
+        base: "0px 0px 10px rgba(27, 42, 90, 0.7)",
+        "base-bold": "0px 0px 7px rgba(27, 42, 90, 1)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

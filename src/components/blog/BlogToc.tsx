@@ -58,9 +58,14 @@ const useScroll = (toc: Toc) => {
       capture: true,
       passive: true,
     });
+    window.addEventListener("transitionend", onResize, {
+      capture: true,
+      passive: false,
+    });
     return () => {
       window.removeEventListener("scroll", onScroll, { capture: true });
       window.removeEventListener("resize", onResize, { capture: true });
+      window.removeEventListener("transitionend", onResize, { capture: true });
     };
   }, [toc]);
 
@@ -82,12 +87,12 @@ export default function BlogToc({ toc }: { toc: Toc }) {
   };
 
   return (
-    <div className="w-72 hidden h-fit max-h-[calc(100vh-10rem)] lg:flex flex-col overflow-x-hidden overflow-y-scroll scrollbar-hide rounded-xl transition-all sticky top-32 bg-blue-400">
+    <div className="w-72 hidden h-fit max-h-[calc(100vh-10rem)] lg:flex flex-col overflow-x-hidden overflow-y-scroll scrollbar-hide rounded-xl transition-all sticky top-32 bg-gradient-to-br from-blue-400 to-blue-950">
       {toc.length !== 0 && (
         <div className="">
           <p
             id="toc-header"
-            className="py-3 font-extrabold leading-6 bg-blue-500 text-white"
+            className="py-3 font-extrabold leading-6 bg-black bg-opacity-20 text-white"
           >
             🫧 한 눈에 보기
           </p>
@@ -104,8 +109,8 @@ export default function BlogToc({ toc }: { toc: Toc }) {
                       "group block py-1",
                       section.subSections && "",
                       isSectionActive(section)
-                        ? "bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text font-bold text-transparent"
-                        : "text-white hover:text-blue-600"
+                        ? "bg-gradient-to-br from-blue-400 to-white bg-clip-text font-bold text-transparent drop-shadow-base-bold"
+                        : "text-white hover:text-blue-200 hover:drop-shadow-base-bold"
                     )}
                   >
                     {section.text}
@@ -116,10 +121,10 @@ export default function BlogToc({ toc }: { toc: Toc }) {
                     <a
                       href={`#${subSection.slug}`}
                       className={clsWrapper(
-                        "group flex items-start py-1",
+                        "group flex items-start py-[2px]",
                         isSubSectionActive(subSection)
-                          ? "bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text font-bold text-transparent"
-                          : "text-white hover:text-blue-600"
+                          ? "bg-gradient-to-br from-blue-400 to-white bg-clip-text font-bold text-transparent drop-shadow-base"
+                          : "text-white hover:text-blue-200 hover:drop-shadow-base"
                       )}
                     >
                       <svg

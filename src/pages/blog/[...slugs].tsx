@@ -48,7 +48,7 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
     <Layout>
       <div className="flex flex-col items-start pb-16">
         <header className="flex w-full flex-col items-center my-10">
-          <h1 className="text-blue-500 text-3xl font-bold mb-5">
+          <h1 className="bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text text-transparent text-3xl font-bold mb-5">
             {post.title}
           </h1>
           <span className="text-blue-500 text-lg">{post.description}</span>

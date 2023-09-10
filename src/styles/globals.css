@@ -25,3 +25,7 @@ body,
 .dark ::selection {
   @apply bg-neutral-500/30;
 }
+
+span {
+  text-align: start;
+}

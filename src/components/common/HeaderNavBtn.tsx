@@ -29,6 +29,7 @@ export default function HeaderNavBtn({ href, text, onClick }: IHeaderNavBtn) {
         )}
         href={href}
         onClick={onClick}
+        replace
       >
         {text}
       </Link>

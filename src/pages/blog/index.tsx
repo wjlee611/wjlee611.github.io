@@ -19,12 +19,21 @@ export default function Blog({ categories }: IBlog) {
   return (
     <Layout>
       <div className="h-full flex flex-col items-start py-16">
-        <Link
-          href="/blog/posts"
-          className="w-full bg-gradient-to-tl from-blue-400 to-blue-200 py-10 text-white text-2xl font-bold bg-opacity-50 rounded-lg shadow-lg hover:shadow-blue-200 transition-colors"
-        >
-          전체 글 보기
-        </Link>
+        <ol className="w-full grid gird-cols-1 md:grid-cols-2 gap-5">
+          <Link
+            href="/blog/posts"
+            className="w-full bg-gradient-to-tl from-blue-500 to-blue-400 py-10 text-white text-2xl font-bold bg-opacity-50 rounded-lg shadow-lg hover:shadow-blue-200 transition-colors"
+          >
+            전체 글 보기
+          </Link>
+          <a
+            href="https://with611.tistory.com/"
+            target="_blank"
+            className="w-full bg-gradient-to-tl from-blue-400 to-blue-200 py-10 text-white text-2xl font-bold bg-opacity-50 rounded-lg shadow-lg hover:shadow-blue-200 transition-colors"
+          >
+            이전 블로그
+          </a>
+        </ol>
         <CategoryTitle>{"// 카테고리별 모아보기"}</CategoryTitle>
         <ul className="w-full grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
           {categories.map((cat, i) => (
