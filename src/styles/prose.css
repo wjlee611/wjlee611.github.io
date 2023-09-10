@@ -1,6 +1,6 @@
 /* common markdown */
 .prose {
-  @apply text-secondary text-start;
+  @apply text-secondary text-start break-words;
 }
 .prose strong,
 .prose h2,
@@ -55,7 +55,7 @@
 }
 
 .prose .rehype-code-title {
-  @apply bg-[#2b2b2b] text-white rounded-t-md border-b-2 border-blue-400 px-5 py-2 text-sm font-bold;
+  @apply w-fit bg-[#2b2b2b] text-white rounded-t-md border-b-2 border-blue-400 px-5 py-2 text-sm font-bold;
 }
 
 /* prose first child, not <TocTop /> */
