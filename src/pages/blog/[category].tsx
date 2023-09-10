@@ -1,3 +1,5 @@
+import CategoryTitle from "@/components/blog/CategoryTitle";
+import PostCard from "@/components/blog/PostCard";
 import Layout from "@/components/common/Layout";
 import { Post, getAllCategories, getPosts } from "@/libs/posts";
 import { GetStaticPaths, GetStaticProps } from "next";
@@ -14,7 +16,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { category } = params as { category: string };
-  const posts = getPosts(category);
+  const posts = getPosts(category, { withIdx: true });
 
   return {
     props: {
@@ -30,15 +32,19 @@ interface ICategoryPage {
 export default function CategoryPage({ posts }: ICategoryPage) {
   return (
     <Layout>
-      <div className="flex flex-col py-16">
-        <ul className="space-y-3 ml-10 mt-10">
-          {posts.map((post, i) => (
-            <li key={i}>
-              <Link href={`/blog/${post.slug}`}>
-                {post.title} - {post.date}
-              </Link>
-            </li>
-          ))}
+      <div className="flex flex-col mt-8 pb-16">
+        <CategoryTitle>
+          {`// ${posts.find((post) => post.slug.endsWith("index"))?.title}`}
+        </CategoryTitle>
+        <ul className="flex flex-col items-center space-y-3">
+          {posts
+            .reduce<Post[]>((ac, post) => {
+              if (post.slug.endsWith("index")) return ac;
+              return [...ac, post];
+            }, [])
+            .map((post, i) => (
+              <PostCard post={post} link={`/blog/${post.slug}`} key={i} />
+            ))}
         </ul>
       </div>
     </Layout>

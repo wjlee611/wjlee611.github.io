@@ -47,19 +47,22 @@ const parsePost = (postPath: string): Post | undefined => {
   }
 };
 
-export const getAllPosts = () => {
+export const getAllPosts = (withIdx: boolean = false) => {
   const postPaths: string[] = sync(`${POSTS_PATH}/**/*.mdx`);
   return postPaths.reduce<Post[]>((ac, postPath) => {
     const post = parsePost(postPath);
     if (!post) return ac;
-    if (post.slug.endsWith("index")) return ac;
+    if (!withIdx && post.slug.endsWith("index")) return ac;
 
     return [...ac, post];
   }, []);
 };
 
-export const getPosts = (category: string) => {
-  const posts = getAllPosts();
+export const getPosts = (
+  category: string,
+  { withIdx = false }: { withIdx: boolean }
+) => {
+  const posts = getAllPosts(withIdx);
 
   return posts.filter((v) => v.slug.split("/")[0] === category);
 };
