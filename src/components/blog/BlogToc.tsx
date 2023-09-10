@@ -36,8 +36,8 @@ const useScroll = (toc: Toc) => {
     function onScroll() {
       if (!headings) return;
 
-      const NAV_TOP = 120;
-      const top = window.pageYOffset + scrollMt - NAV_TOP + 1;
+      const NAV_TOP = -120;
+      const top = window.scrollY + scrollMt - NAV_TOP + 1;
 
       let current: typeof currentSectionSlug = undefined;
       for (let i = 0; i < headings.length; i++) {
