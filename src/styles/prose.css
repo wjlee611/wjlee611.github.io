@@ -10,6 +10,15 @@
   @apply text-primary;
 }
 
+.prose h2,
+.prose h3 {
+  @apply bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text text-transparent;
+}
+
+.prose h2 {
+  @apply drop-shadow;
+}
+
 .prose del {
   @apply text-mute;
 }

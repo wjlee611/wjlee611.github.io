@@ -48,13 +48,13 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
     <Layout>
       <div className="flex flex-col items-start pb-16">
         <header className="flex w-full flex-col items-center my-10">
-          <h1 className="bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text text-transparent text-3xl font-bold mb-5">
+          <h1 className="bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text text-transparent text-3xl font-bold mb-5 drop-shadow">
             {post.title}
           </h1>
           <span className="text-blue-500 text-lg">{post.description}</span>
           <span className="space-x-10 mt-5 text-blue-400 text-sm">
             읽는데
-            <span className="text-blue-500 text-xl">
+            <span className="text-blue-500 text-xl font-semibold">
               {" "}
               {post.readingMinutes}
             </span>

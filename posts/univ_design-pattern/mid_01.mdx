@@ -1,0 +1,187 @@
+---
+title: "Strategy Pattern"
+description: "Strategy 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다."
+icon: ""
+image: ""
+tags:
+  - Design Pattern
+  - Strategy Pattern
+  - extends
+  - implements
+draft: false
+date: 2023-09-11 09:09:28
+---
+
+## 상속
+
+### extends
+
+오리 시뮬레이터를 만든다고 가정해보자.
+그렇다면 일단 오리 객체를 만들어야 할 것이다.
+
+```java:Duck.java {5}
+class Duck() {
+  quack() {};
+  swim() {};
+  fly() {};
+  display() {};
+  // other duck-like methods
+}
+```
+
+그리고 여러 종류의 오리는 이 `Duck` 클래스를 상속받아서 사용하면 될 것이다.
+
+```java:Ducks.java {2-3, 7-8}
+class MallardDuck extends Duck {
+  @override
+  display() {};
+}
+
+class RedheadDuck extends Duck {
+  @override
+  display() {};
+}
+```
+
+물론 생김새는 다르기에 일부 메서드는 `override`해서 사용해야 할 것이다.
+이 때 자식 클래스와 부모 클래스는 `is a` 관계를 갖는다고 말한다.
+_e.g. MallardDuck is a Duck_
+
+### implements (interface)
+
+이제 고무 오리를 만들어보자.
+
+```java:Ducks.java {4-7}
+class RubberDuck extends Duck {
+  @override
+  display() {}
+  @override
+  quack() {}
+  @override
+  fly() {}
+}
+```
+
+고무 오리는 `꽥` 소리를 내지 않고 `삑`소리를 내기 때문에 `quack()` 메서드 역시 override 해야한다.
+또한, 날지도 않기에 `fly()` 메서드 역시 override 해야한다.
+
+DecoyDuck을 또 만든다면?
+이 역시 quack, fly 메서드를 override 해야한다.
+
+이렇게 모든 Duck들이 공유하지 않는 속성은 매번 override 해야하는 문제점이 있다.
+
+이 때, `interface`를 사용하면 이 문제를 해결할 수 있다.
+
+```diff-java:DucksWithInterfece.java {12, 18}
+  class Duck() {
+    swim() {};
+    display() {};
+  }
++ interface Flyable() {
++   fly();
++ }
++ interface Quackable() {
++   quack();
++ }
+
+  class MallardDuck extends Duck implements Flyable, Quackable {
++   fly() {};
++   quack() {};
+    @override
+    display() {};
+  }
+  class RubberDuck extends Duck implements Quackable {
++   quack() {};
+    @override
+    display() {};
+  }
+```
+
+이렇게 변할 수 있는 부분은 interface로 띄어내면 쓸데없이 메서드를 override할 일이 줄어든다.
+이 때 구현 클래스와 인터페이스는 `has a` 관계를 갖는다고 한다.
+_e.g. RubberDuck has a Quackable_
+
+_참고:_
+_class, interfece의 차이는 사실 거의 없다._
+
+### interface 다형성
+
+하지만 위 방식 역시 문제가 존재한다.
+MallardDuck, RedheadDuck 두 오리 모두 같은 quack 메서드로 동작해야 하지만,
+이를 implements 하는 과정에서 두 메서드를 중복해서 구현해야 한다는 문제점이 발생한다.
+
+이를 해결하기 위해서는 인터페이스의 다형성의 원리를 이용하는게 좋다.
+
+```diff-java:DucksWithPolymorphism.java {18, 20-24}
+  interface QuackBehavior {
+    quack();
+  }
++ class Quack implements QuackBehavior {
+    @override
+    quack() {'꽥'};
+  }
++ class Squack implements QuackBehavior {
+    @override
+    quack() {'삑'};
+  }
++ class MuteQuack implements QuackBehavior {
+    @override
+    quack() {};
+  }
+
+  class Duck {
+    QuackBehavior quackBehavior;
+
+    performQuack() {
+      // delegate to the behavior class
+      // 한 마디로 짬때리기...
+      quackBehavior.quack();
+    }
+    // ...
+  }
+
+  class MallardDuck extends Duck {
+    MallardDuck() {
+      // 다형성의 원리에 의해 QuackBehavior 타입에 Quack 객체를 지정할 수 있다.
++     quackBehavior = new Quack();
+    }
+
+    // 구현 없이 바로 performQuack 메서드(꽥)를 사용할 수 있음.
+    // ...
+  }
+  class RubberDuck extends Duck {
+    MallardDuck() {
+      // 다형성의 원리에 의해 QuackBehavior 타입에 Squack 객체를 지정할 수 있다.
++     quackBehavior = new Squack();
+    }
+
+    // 구현 없이 바로 performQuack 메서드(삑)를 사용할 수 있음.
+    // ...
+  }
+```
+
+이렇게 하면 필요한 부분에만 기능을 추가할 수 있고, 코드의 재사용성도 올라간다.
+뿐만 아니라 새로운 기능 (예로 들어 새로운 울음 소리)의 추가도 쉬워진다.
+
+## Strategy Pattern
+
+위에서 알아본 적절한 상속관계를 준수한 패턴을 `Strategy Pattern` 라고 한다.
+정확한 정의는 다음과 같다.
+
+> 객체들이 할 수 있는 행위 각각에 대해 `전략 클래스 (Quack, Squack)`를 생성하고,
+> `유사한 행위들을 캡슐화` 하는 `인터페이스 (QuackBehavior)`를 정의하여,
+> 객체의 행위를 동적으로 바꾸고 싶은 경우 `직접 행위를 수정하지 않고 (performQuack())`
+> 전략을 바꿔주기만 함으로써 행위를 유연하게 확장하는 방법을 말합니다.
+
+간단히 말해서 객체가 할 수 있는 행위들을 각각을 전략으로 만들어 놓고, 동적으로 행위의 수정이 필요한 경우 전략을 바꾸는 것만으로 행위의 수정이 가능하도록 만든 패턴이다.
+
+## 결론
+
+`has a (구현)`관계가 `is a (상속)`관계보다 낫다.
+
+상속은 뭘 상속해야 하는지 일일이 파악해야 하는 귀찮음이 있기 때문이다.
+하지만, 구현은 필요한 기능만 가져다 쓰면 되기에 사용및 개발적 측면에서 좋고,
+새로운 기능은 인터페이스를 추가로 구현하면 끝이기에 유지보수 측면에서도 좋다.
+
+따라서 단순히 상속을 이용한 객체지향 프로그래밍 보단,
+전략 패턴을 적용한 코딩 습관을 기르도록 하자.

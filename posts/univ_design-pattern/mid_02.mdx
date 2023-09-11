@@ -1,0 +1,203 @@
+---
+title: "Observer Pattern"
+description: "Observer 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다."
+icon: ""
+image: ""
+tags:
+  - Design Pattern
+  - Observer Pattern
+  - interface
+draft: false
+date: 2023-09-11 10:33:19
+---
+
+## Strategy Pattern
+
+[**저번 포스트**](https://wjlee611.github.io/blog/univ_design-pattern/mid_01)에서 배운 `Strategy 디자인 패턴`을 이용해서 한 가지 예를 살펴보자.
+
+```java:WeatherData.java {7} showLineNumbers
+public class WeatherData {
+  public void measurementsChanged() {
+    float temp = getTemperature();
+    float humidity = getHumidity();
+    float pressure = getPressure();
+
+     // 각 장치는 update라는 전략을 사용하는 전략 클래스를 갖고있는 클래스이다.
+    currentConditionsDisplay.update(temp, humidity, pressure);
+    statisticsDisplay.update(temp, humidity, pressure);
+    forecastDisplay.update(temp, humidity, pressure);
+  }
+}
+```
+
+이 코드는 `Display`장치들이 `WeatherData`에서 제공하는 데이터를 이용하려는 코드이다.
+
+예로 들어 `forecastDisplay`에서 날씨 정보를 출력하기 위해서는
+`WeatherData`에서 `forecastDisplay.update()` 메서드를 호출해야
+날씨 정보가 비로소 `forecastDisplay`로 전달되는 것이다.
+
+### 문제점
+
+여기서 문제가 발생한다.
+만약 새로운 장치 futureDisplay를 구현하려면 Strategy Pattern을 사용하는 코드는 아래와 같은 코드수정이 필요해진다.
+
+1. update() 전략을 갖고있는 인터페이스로 구현한 전략(Display) 클래스를 만든다.
+2. `Line 7`에 새로운 장치를 등록한다.
+
+지금 당장은 문제될게 없어 보이지만, 만약 당신이 WeatherData를 `라이브러리화 해서 배포`하는 입장일 경우를 고려해보자.
+`사용자`는 단지 새로운 Display를 추가하여 바로 날씨 정보를 받아오고 싶을 것이다.
+하지만, 위와 같은 코드라면 사용자는 라이브러리 파일을 뜯어서 WeatherData 클래스 내부에
+직접적으로 `새로운 Display를 의존성 주입`을 해줘야만 할 것이다.
+
+이 경우는 꽤나 치명적이다.
+생각해보면 우리가 사용하는 대부분의 라이브러리는 이런 과정을 겪지 않으니 말이다.
+
+따라서 이런 문제를 해결하기 위한 디자인 패턴이 필요하다.
+
+## Observer Pattern
+
+Observer Pattern의 정의는 다음과 같다.
+
+> 객체들이 1:N의 관계를 갖을 때, 한 객체의 상태가 변하면 다른 모든 객체들에 업데이트 통지가 떨어지는 관계로,
+> `객체(Subject)`와 `객체들(Observers)`간의 `종속성이 없는 관계`를 의미한다.
+
+코드로 살펴보며 이해해보자.
+
+### interface
+
+```java:IObserverPattern.java {1-5, 7-9}
+public interface Subject {
+    public void registerObserver(Observer o);
+    public void removeObserver(Observer o);
+    public void notifyObservers();
+}
+
+public interface Observer {
+    public void update(ﬂoat temp, ﬂoat humidity, ﬂoat pressure);
+}
+
+public interface DisplayElement {
+    public void display();
+}
+```
+
+위 코드는 Observer Pattern에서 사용하는 인터페이스이다.
+`1`의 입장인 클래스(Subject)는 `Subject 인터페이스`를 구현해야 하고,
+`N`의 입장인 클래스(Observers)는 `Observer 인터페이스`를 구현해야 한다.
+
+### Subject class
+
+```diff-java:WeatherData.java {24}
+  public class WeatherData implements Subject {
++   private ArrayList<Observer> observers;
+
+    public WeatherData() {
+      observers = new ArrayList<Observer>();
+    }
+
++   @implements
++   public void registerObserver(Observer o) {
++     observers.add(o);
++   }
++
++   @implements
++   public void removeObserver(Observer o) {
++     int i = observers.indexOf(o);
++     if (i < 0) return;
++     observers.remove(i);
++   }
++
++   @implements
++   public void notifyObservers() {
++     for (int i=0; i<observers.length; i++) {
++       Observer o = observers.get(i);
++       o.update(temp, humidity, pressure);
++     }
++   }
+
+    public void setMeasurements(float temp, float humidity, float pressure) {
+      this.temp = temp;
+      this.humidity = humidity;
+      this.pressure = pressure;
+      measurementsChanged();
+    }
+
+     // 더이상 WeatherData 클래스는 수정할 일이 없어진다.
+    public void measurementsChanged() {
++     notifyObservers()
+-     float temp = getTemperature();
+-     float humidity = getHumidity();
+-     float pressure = getPressure();
+-
+-     // 각 장치는 update라는 전략을 사용하는 전략 클래스를 갖고있는 클래스이다.
+-     currentConditionsDisplay.update(temp, humidity, pressure);
+-     statisticsDisplay.update(temp, humidity, pressure);
+-     forecastDisplay.update(temp, humidity, pressure);
+    }
+  }
+```
+
+Subject class의 역할은 Observer의 `구독과 해지`하는 역할을 담당하고,
+구독된 Observers에게 `본인의 변경사항을 알려`주는 역할을 한다.
+
+본인의 변경사항을 알려주기 위해 `Observer는 update 전략`을 포함하고 있어야 한다.
+
+### Observer class
+
+```java:FutureDisplay.java {6-8}
+public class FutureDisplay implements Observer, DisplayElement {
+  private Subject weatherData;
+
+  public FutureDisplay(Subject weatherData) {
+    this.weatherData = weatherData;
+    // Observer가 Subject를 구독한다.
+    // 비로소 Subject가 update를 쏴줄 수 있다.
+    weatherData .registerObserver(this);
+  }
+
+  public void update(float temp, float humidity, float pressure) {
+    this.temp = temp;
+    this.humidity = humidity;
+    this.pressure = pressure;
+    display();
+  }
+
+  @implements
+  public void display() {
+    // ...
+  }
+}
+```
+
+Observer는 생성시 자동으로 `Subject를 구독`하게 되고,
+구독했기에 Subject의 상태 변경시 자동으로 Observer를 업데이트 할 수 있다.
+
+> 여기서 눈여겨 봐야 할 점은 `Observer의 update` 전략 메서드는 `Subject`에서,
+> `Subject의 register, remove` 전략 메서드는 `Observer`에서 호출된다는 점이다.
+> 서로 `크로스`되어 메서드를 호출한다는 점을 주목하자.
+
+### main (사용자 입장)
+
+```diff-java:WeatherStation.java {5-6}
+  public class WeatherStation {
+    public static void main(String[] args) {
+      WeatherData weatherData = new WeatherData();
+
+      // another displays
++     FutureDisplay futureDisplay = new FutureDisplay(weatherData);
+
+      weatherData.setMeasurements(80, 65, 30.4f);
+      weatherData.setMeasurements(82, 70, 29.2f);
+      weatherData.setMeasurements(78, 90, 29.3f);
+    }
+  }
+```
+
+사용자 입장에서는 새로운 Display객체 생성시 WeatherData를 의존성 주입만 해주면,
+그 뒤의 모든 과정은 Observer Pattern에 의해 자동으로 업데이트가 가능해진다.
+
+## 결론
+
+`의존성이 없어`야 하지만 `여러 클래스와 관계`를 가져야하고,
+동시에 `코드가 수정되는 일이 적어`야만 하는 클래스는
+Observer Pattern을 그 클리스와 관계를 갖는 여러 클래스에 적용하는 것이 좋다.
