@@ -62,7 +62,7 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
           </span>
         </header>
         <section className="w-full flex justify-between space-x-5">
-          <div className="w-full flex flex-col prose dark:prose-dark max-w-full lg:max-w-2xl 2xl:max-w-4xl">
+          <div className="w-full flex flex-col items-start prose dark:prose-dark max-w-full lg:max-w-2xl 2xl:max-w-4xl">
             <MDXRemote {...mdx} />
           </div>
           <BlogToc toc={toc} />
