@@ -67,16 +67,19 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
           </div>
           <BlogToc toc={toc} />
         </section>
-        <footer className="flex flex-col mt-10">
+        <footer className="w-full flex flex-col mt-10">
           <span className="text-blue-400 italic text-start">
             {post.date} 에 작성되었어요.
           </span>
-          <div className="flex items-center mt-5 space-x-5">
+          <div className="w-full flex items-start mt-5 space-x-5">
             <span>Tag</span>
-            <ul className="flex space-x-3 list-none m-0">
+            <ul className="w-full flex list-none m-0 flex-wrap gap-1">
               {post.tags.map((tag, i) => (
-                <li key={i} className="bg-blue-400 px-3 text-white rounded-md">
-                  #{tag}
+                <li
+                  key={i}
+                  className="bg-gradient-to-br from-blue-500 to-blue-400 px-3 text-white rounded-md shadow-md whitespace-nowrap"
+                >
+                  # {tag}
                 </li>
               ))}
             </ul>

@@ -49,13 +49,15 @@ const parsePost = (postPath: string): Post | undefined => {
 
 export const getAllPosts = (withIdx: boolean = false) => {
   const postPaths: string[] = sync(`${POSTS_PATH}/**/*.mdx`);
-  return postPaths.reduce<Post[]>((ac, postPath) => {
+  const posts = postPaths.reduce<Post[]>((ac, postPath) => {
     const post = parsePost(postPath);
     if (!post) return ac;
     if (!withIdx && post.slug.endsWith("index")) return ac;
 
     return [...ac, post];
   }, []);
+
+  return posts.sort((p1, p2) => (p1.date < p2.date ? 1 : -1));
 };
 
 export const getPosts = (
