@@ -99,3 +99,50 @@
 .prose hr {
   @apply w-3/4 mx-auto h-[3px] bg-blue-600 bg-opacity-50 rounded-full;
 }
+
+/* 자체 디자인 박스
+ - <warning></warning>
+ - <notice></notice>
+ - <tip></tip>
+*/
+.prose warning,
+.prose notice,
+.prose tip {
+  @apply block w-full border-l-4 p-4 my-5 rounded-md shadow-md;
+}
+.prose warning {
+  @apply border-red-500 bg-red-500 bg-opacity-30;
+}
+.prose notice {
+  @apply border-amber-500 bg-amber-500 bg-opacity-30;
+}
+.prose tip {
+  @apply border-teal-500 bg-teal-500 bg-opacity-30;
+}
+.prose warning > p,
+.prose notice > p,
+.prose tip > p {
+  @apply m-0;
+}
+
+.prose warning::before,
+.prose notice::before,
+.prose tip::before {
+  @apply block w-7;
+}
+.prose warning::before {
+  content: url("../../public/svgs/svg_warning.svg");
+  filter: invert(32%) sepia(90%) saturate(3620%) hue-rotate(343deg)
+    brightness(118%) contrast(87%);
+}
+.prose notice::before {
+  content: url("../../public/svgs/svg_notice.svg");
+  filter: invert(68%) sepia(47%) saturate(2305%) hue-rotate(355deg)
+    brightness(97%) contrast(97%);
+}
+.prose tip::before {
+  @apply w-6;
+  content: url("../../public/svgs/svg_tip.svg");
+  filter: invert(59%) sepia(58%) saturate(3049%) hue-rotate(133deg)
+    brightness(96%) contrast(84%);
+}
