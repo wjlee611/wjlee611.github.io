@@ -5,7 +5,7 @@
   "homepage": "https://wjlee611.github.io/",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-sitemap && next export",
     "export": "next export && next export && next-export-optimize-images",
     "start": "next start",
     "lint": "next lint"
@@ -28,6 +28,7 @@
     "next": "13.4.12",
     "next-export-optimize-images": "^3.2.0",
     "next-mdx-remote": "^4.4.1",
+    "next-sitemap": "^4.2.3",
     "postcss": "8.4.27",
     "react": "18.2.0",
     "react-dom": "18.2.0",
