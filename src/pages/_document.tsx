@@ -13,6 +13,10 @@ export default function Document() {
           name="google-site-verification"
           content="vhQ9DaDdUJcSBHKI_U6tAtE61zwz2i2pLQXyZ62GRLk"
         />
+        <meta
+          name="naver-site-verification"
+          content="07764cc1a8eda55b4bdf78cf846d6811d042b9ee"
+        />
       </Head>
       <body>
         <Main />
