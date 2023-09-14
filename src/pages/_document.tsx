@@ -9,6 +9,10 @@ export default function Document() {
         <meta name="apple-mobile-web-app-title" content="웅덩이" />
         <meta name="application-name" content="웅덩이" />
         <meta name="theme-color" content="#009c39" />
+        <meta
+          name="google-site-verification"
+          content="vhQ9DaDdUJcSBHKI_U6tAtE61zwz2i2pLQXyZ62GRLk"
+        />
       </Head>
       <body>
         <Main />
