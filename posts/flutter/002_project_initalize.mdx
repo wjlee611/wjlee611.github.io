@@ -1,0 +1,81 @@
+---
+title: '플러터 프로젝트 만들기'
+description: '플러터 프로젝트 생성 가이드 입니다.'
+icon: ''
+image: ''
+tags:
+  - Flutter
+  - Getting started
+draft: false
+date: 2023-09-14 16:37:49
+---
+
+## 시작 전 주의사항
+
+<notice>
+  이 포스트에선 플러터 프로젝트를 생성하는 방법을 다뤄봅니다.
+  따라서 플러터 SDK 설치나, 관련 환경설정이 안되신 분은 [**`플러터 시작하기`**](https://wjlee611.github.io/blog/flutter/001_installation)를 꼭 읽어보시고 다시 와주시기 바랍니다.
+</notice>
+
+<notice>
+  본 블로그의 플러터 개발환경은 `VSCode`와 `터미널`로 고정됩니다.
+  따라서 다른 개발환경에 대한 정보는 없으므로 이 점 참고 부탁드립니다.
+</notice>
+
+## 프로젝트 생성
+
+프로젝트 생성을 위해 우선 본인이 프로젝트를 관리할 폴더로 이동해주세요.
+제 경우에는 깃허브로 버전관리를 하는 프로젝트의 경우 `~/Documents/GitHub` 폴더에서 일괄적으로 관리하는 편입니다.
+
+```bash:Terminal
+cd ~/Documents/GitHub
+```
+
+이후에는 아래의 명령어로 플러터 프로젝트를 생성합니다.
+
+```bash:Terminal
+flutter create <proj_name>
+```
+
+이 때, 프로젝트를 생성할 때 알아두면 유용한 (거의 필수) 몇 가지 옵션을 소개드립니다.
+
+### --org
+
+이 옵션을 지정하면 프로젝트를 생성할 때 패키지명을 지정할 수 있습니다.
+
+```bash:Terminal
+flutter create <proj_name> --org <package_name>
+```
+
+<notice>
+  \<package_name\>이 100% 동일하게 패키지 이름이 되는 것은 아닙니다.
+  옵션명에서 유추할 수 있듯 기관의 이름을 적는 것입니다.
+
+  따라서 진짜 패키지 이름은 `<package_name>.<proj_name>` 형식이 됩니다.
+</notice>
+
+예로들어 아래와 같이 프로젝트를 생성했다고 가정해봅시다.
+
+![230914-164837](/posts/002_project_initalize/230914-164837.png)
+
+이 경우에는 프로젝트명 - `gdsc_study` / 패키지명 - `com.gmail.wjlee611` 입니다.
+따라서 프로젝트에서 실제로 적용되는 패키지명은 아래와 같아집니다.
+
+![230914-165226](/posts/002_project_initalize/230914-165226.png)
+
+> Android - `com.gmail.wjlee611.gdsc_study`
+> iOS - `com.gmail.wjlee611.gdscStudy`
+
+같은 명령어라도 다른 패키지명이 생성되니 나중에 앱을 배포할 때 반드시 패키지명을 확인하도록 합시다.
+
+### -i swift
+
+기본적으로 생성되는 iOS 코드는 `Objective-C` 입니다.
+하지만 이 옵션을 추가하면 `Swift`로 생성되게 됩니다.
+
+### -a kotlin
+
+기본적으로 생성되는 Android 코드는 `Java` 입니다.
+하지만 이 옵션을 추가하면 `Kotlin`으로 생성되게 됩니다.
+
+
