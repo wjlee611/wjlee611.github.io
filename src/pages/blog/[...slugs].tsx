@@ -4,6 +4,7 @@ import { parseToc, serializeMdx } from "@/libs/mdx";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Layout from "@/components/common/Layout";
 import BlogToc, { Section } from "@/components/blog/BlogToc";
+import Giscus from "@/components/blog/Giscus";
 
 export const getStaticPaths: GetStaticPaths = () => {
   const posts = getAllPosts();
@@ -71,7 +72,7 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
           <span className="text-blue-400 italic text-start">
             {post.date} 에 작성되었어요.
           </span>
-          <div className="w-full flex items-start mt-5 space-x-5">
+          <div className="w-full flex items-start mt-5 mb-10 space-x-5">
             <span>Tag</span>
             <ul className="w-full flex list-none m-0 flex-wrap gap-1">
               {post.tags.map((tag, i) => (
@@ -84,6 +85,7 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
               ))}
             </ul>
           </div>
+          <Giscus />
         </footer>
       </div>
     </Layout>

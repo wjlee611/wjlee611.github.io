@@ -98,6 +98,11 @@ export default function App({ Component, pageProps, router }: AppProps) {
     >
       <Head>
         <title>웅덩이</title>
+        <link
+          rel="canonical"
+          href={`https://wjlee611.github.io${router.asPath}`}
+          key="canonical"
+        />
       </Head>
       <Header />
       <AnimatePresence
