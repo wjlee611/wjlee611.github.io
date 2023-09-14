@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import matter from "gray-matter";
 import dayjs from "dayjs";
+import "dayjs/locale/ko";
 import readingTime from "reading-time";
 
 const BASE_PATH = "posts";
@@ -36,7 +37,7 @@ const parsePost = (postPath: string): Post | undefined => {
     return {
       ...grayMatter,
       tags: grayMatter.tags.filter(Boolean),
-      date: dayjs(grayMatter.date).format("YYYY-MM-DD"),
+      date: dayjs(grayMatter.date).locale("ko").format("YYYY-MM-DD / HH:MM"),
       content,
       slug: path.relative(POSTS_PATH, postPath).replace(".mdx", ""),
       readingMinutes: Math.ceil(readingTime(content).minutes),
