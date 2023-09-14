@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://wjlee611.github.io
+
+# Sitemaps
+Sitemap: https://wjlee611.github.io/sitemap.xml
