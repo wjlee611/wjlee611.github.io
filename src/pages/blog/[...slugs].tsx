@@ -5,6 +5,9 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Layout from "@/components/common/Layout";
 import BlogToc, { Section } from "@/components/blog/BlogToc";
 import Giscus from "@/components/blog/Giscus";
+import YT from "@/components/blog/YT";
+
+const components = { YT };
 
 export const getStaticPaths: GetStaticPaths = () => {
   const posts = getAllPosts();
@@ -64,7 +67,7 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
         </header>
         <section className="w-full flex justify-between space-x-5">
           <div className="w-full flex flex-col items-start prose dark:prose-dark max-w-full lg:max-w-2xl 2xl:max-w-4xl">
-            <MDXRemote {...mdx} />
+            <MDXRemote {...mdx} components={components} />
           </div>
           <BlogToc toc={toc} />
         </section>
