@@ -9,6 +9,7 @@ import { AnimatePresence } from "framer-motion";
 import Header from "@/components/common/Header";
 import clsWrapper from "@/utils/class-wrapper";
 import { useEffect, useState } from "react";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 const progress = new ProgressBar({
@@ -89,30 +90,32 @@ export default function App({ Component, pageProps, router }: AppProps) {
   }, [router]);
 
   return (
-    <div
-      className={clsWrapper(
-        inter.className,
-        "text-center transition-all",
-        onTransition ? "w-screen h-screen overflow-x-hidden" : ""
-      )}
-    >
-      <Head>
-        <title>웅덩이</title>
-        <link
-          rel="canonical"
-          href={`https://wjlee611.github.io${router.asPath}`}
-          key="canonical"
-        />
-      </Head>
-      <Header />
-      <AnimatePresence
-        mode="wait"
-        initial={false}
-        presenceAffectsLayout={true}
-        onExitComplete={() => window.scrollTo(0, 0)}
+    <ThemeProvider attribute="class">
+      <div
+        className={clsWrapper(
+          inter.className,
+          "text-center transition-all",
+          onTransition ? "w-screen h-screen overflow-x-hidden" : ""
+        )}
       >
-        <Component {...pageProps} key={router.asPath} />
-      </AnimatePresence>
-    </div>
+        <Head>
+          <title>웅덩이</title>
+          <link
+            rel="canonical"
+            href={`https://wjlee611.github.io${router.asPath}`}
+            key="canonical"
+          />
+        </Head>
+        <Header />
+        <AnimatePresence
+          mode="wait"
+          initial={false}
+          presenceAffectsLayout={true}
+          onExitComplete={() => window.scrollTo(0, 0)}
+        >
+          <Component {...pageProps} key={router.asPath} />
+        </AnimatePresence>
+      </div>
+    </ThemeProvider>
   );
 }

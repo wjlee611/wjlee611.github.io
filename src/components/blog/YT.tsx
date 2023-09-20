@@ -6,9 +6,11 @@ export default function YT({ id }: IYT) {
   return (
     <iframe
       width="100%"
-      height="450"
+      height="auto"
+      className="aspect-video"
       src={`https://www.youtube.com/embed/${id}`}
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media' gyroscope; picture-in-picture;"
-    ></iframe>
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowFullScreen
+    />
   );
 }

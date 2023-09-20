@@ -1,13 +1,13 @@
 import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Giscus() {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  // https://github.com/giscus/giscus/tree/main/styles/themes
   const theme = resolvedTheme === "dark" ? "dark" : "light";
 
   useEffect(() => {
@@ -33,17 +33,31 @@ export default function Giscus() {
     scriptElem.setAttribute("crossorigin", "anonymous");
 
     ref.current.appendChild(scriptElem);
+    setMounted(true);
   }, [theme]);
+
+  // https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#isetconfigmessage
+  useEffect(() => {
+    if (!mounted) return;
+
+    const iframe = document.querySelector<HTMLIFrameElement>(
+      "iframe.giscus-frame"
+    );
+    iframe?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme } } },
+      "https://giscus.app"
+    );
+  }, [theme, mounted]);
 
   useEffect(() => {
     const iframe = document.querySelector<HTMLIFrameElement>(
       "iframe.giscus-frame"
     );
     iframe?.contentWindow?.postMessage(
-      { giscus: { setConfig: { term: router.asPath } } },
+      { giscus: { setConfig: { term: router.asPath, theme } } },
       "https://giscus.app"
     );
-  }, [router.asPath]);
+  }, [router.asPath, theme]);
 
   return <section ref={ref} />;
 }

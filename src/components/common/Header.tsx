@@ -5,6 +5,7 @@ import { BsListNested } from "react-icons/bs";
 import { GrClose } from "react-icons/gr";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import ThemeSwitch from "./ThemeSwitch";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,6 +37,7 @@ export default function Header() {
           <HeaderNavBtn href="/blog" text="Blog" />
           <HeaderNavBtn href="/arkhive" text="Arkhive" />
         </nav>
+        <ThemeSwitch />
         <button
           className="flex md:hidden items-center justify-center w-16 h-16 text-2xl"
           onClick={() => setIsOpen((prev) => !prev)}

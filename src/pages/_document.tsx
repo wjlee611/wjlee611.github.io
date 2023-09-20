@@ -19,6 +19,22 @@ export default function Document() {
         />
       </Head>
       <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            const theme = localStorage.getItem("theme");
+            const getUserTheme = () => {
+             if(theme){
+              return theme
+             } 
+             return window.matchMedia('(prefers-color-scheme: dark)').matches
+             ? 'dark'
+             : 'light'
+          }
+          document.body.dataset.theme = getUserTheme();
+          `,
+          }}
+        />
         <Main />
         <NextScript />
       </body>
