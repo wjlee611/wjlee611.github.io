@@ -18,7 +18,7 @@ export default function Document() {
           content="07764cc1a8eda55b4bdf78cf846d6811d042b9ee"
         />
       </Head>
-      <body>
+      <body className="text-primary transition-[background] bg-white dark:bg-[#1A1C23]">
         <script
           dangerouslySetInnerHTML={{
             __html: `

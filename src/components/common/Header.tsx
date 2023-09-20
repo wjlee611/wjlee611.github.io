@@ -24,26 +24,30 @@ export default function Header() {
 
   return (
     <AnimatePresence>
-      <header className="fixed top-0 left-0 right-0 mx-anuo w-screen h-16 flex justify-between md:justify-start px-10 backdrop-blur bg-blue-200 bg-opacity-20 z-50">
-        <Link
-          onClick={() => setIsOpen(false)}
-          href="/"
-          className="h-16 aspect-square flex justify-center items-center text-3xl mr-10 select-none cursor-pointer"
-        >
-          🫧
-        </Link>
-        <nav className="h-full hidden md:flex space-x-8 overflow-hidden">
-          <HeaderNavBtn href="/" text="Portfolio" />
-          <HeaderNavBtn href="/blog" text="Blog" />
-          <HeaderNavBtn href="/arkhive" text="Arkhive" />
-        </nav>
-        <ThemeSwitch />
-        <button
-          className="flex md:hidden items-center justify-center w-16 h-16 text-2xl"
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
-          {isOpen ? GrClose() : BsListNested()}
-        </button>
+      <header className="fixed top-0 left-0 right-0 mx-anuo w-screen h-16 flex justify-between items-center px-10 backdrop-blur bg-blue-200 bg-opacity-20 z-50">
+        <div className="h-full flex items-center">
+          <Link
+            onClick={() => setIsOpen(false)}
+            href="/"
+            className="h-16 aspect-square flex justify-center items-center text-3xl select-none cursor-pointer"
+          >
+            🫧
+          </Link>
+          <nav className="h-full hidden md:flex space-x-8 overflow-hidden ml-10">
+            <HeaderNavBtn href="/" text="Portfolio" />
+            <HeaderNavBtn href="/blog" text="Blog" />
+            <HeaderNavBtn href="/arkhive" text="Arkhive" />
+          </nav>
+        </div>
+        <div className="flex items-center">
+          <ThemeSwitch />
+          <button
+            className="flex md:hidden items-center justify-center w-16 h-16 text-2xl"
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
+            {isOpen ? GrClose() : BsListNested()}
+          </button>
+        </div>
       </header>
       {isOpen ? (
         <motion.div

@@ -10,7 +10,7 @@ export default function PostCard({ post, link }: IPostCard) {
   return (
     <Link
       href={link}
-      className="w-full max-w-2xl flex flex-col border border-blue-300 rounded-md py-5 px-5 text-start shadow-md hover:bg-blue-100 hover:shadow-blue-200 transition-colors relative"
+      className="w-full max-w-2xl flex flex-col border border-blue-300 rounded-md py-5 px-5 text-start shadow-md hover:bg-blue-100 hover:shadow-blue-200 dark:hover:bg-blue-950 dark:hover:shadow-blue-900 transition-colors relative"
     >
       <h4 className="text-xl bg-gradient-to-r from-blue-600 to-blue-300 bg-clip-text font-bold text-transparent">
         {post.title}

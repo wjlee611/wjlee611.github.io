@@ -22,14 +22,14 @@ export default function Blog({ categories }: IBlog) {
         <ol className="w-full grid gird-cols-1 md:grid-cols-2 gap-5">
           <Link
             href="/blog/posts"
-            className="w-full bg-gradient-to-tl from-blue-500 to-blue-400 py-10 text-white text-2xl font-bold bg-opacity-50 rounded-lg shadow-lg hover:shadow-blue-200 transition-colors"
+            className="w-full bg-gradient-to-tl from-blue-500 to-blue-400 py-10 text-white text-2xl font-bold bg-opacity-50 rounded-lg shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900 transition-colors"
           >
             전체 글 보기
           </Link>
           <a
             href="https://with611.tistory.com/"
             target="_blank"
-            className="w-full bg-gradient-to-tl from-blue-400 to-blue-200 py-10 text-white text-2xl font-bold bg-opacity-50 rounded-lg shadow-lg hover:shadow-blue-200 transition-colors"
+            className="w-full bg-gradient-to-tl from-blue-400 to-blue-200 py-10 text-white text-2xl font-bold bg-opacity-50 rounded-lg shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900 transition-colors"
           >
             이전 블로그
           </a>
@@ -40,7 +40,7 @@ export default function Blog({ categories }: IBlog) {
             <Link
               href={`/blog/${cat.slug.split("/")[0]}`}
               key={i}
-              className="w-full border border-blue-300 rounded-md py-5 px-5 text-start shadow-md hover:bg-blue-100 hover:shadow-blue-200 transition-colors"
+              className="w-full border border-blue-300 rounded-md py-5 px-5 text-start shadow-md hover:bg-blue-100 hover:shadow-blue-200 dark:hover:bg-blue-950 dark:hover:shadow-blue-900 transition-colors"
             >
               <h4 className="text-xl bg-gradient-to-r from-blue-600 to-blue-300 bg-clip-text font-bold text-transparent">
                 {cat.title}

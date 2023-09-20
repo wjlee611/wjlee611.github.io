@@ -54,10 +54,10 @@ export default function Giscus() {
       "iframe.giscus-frame"
     );
     iframe?.contentWindow?.postMessage(
-      { giscus: { setConfig: { term: router.asPath, theme } } },
+      { giscus: { setConfig: { term: router.asPath } } },
       "https://giscus.app"
     );
-  }, [router.asPath, theme]);
+  }, [router.asPath]);
 
   return <section ref={ref} />;
 }
