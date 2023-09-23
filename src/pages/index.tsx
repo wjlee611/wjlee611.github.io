@@ -1,24 +1,27 @@
 import Layout from "@/components/common/Layout";
+import Background from "@/components/portfolio/Background";
+import PortfolioProjects from "@/components/portfolio/PortfolioProjects";
+import PortfolioTitle from "@/components/portfolio/PortfolioTitle";
+import WaterfallLayout from "@/components/portfolio/WaterfallLayout";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-between py-16">
-        <Image
-          src="/images/icon_circle.png"
-          alt="웅덩이 로고"
-          width={180}
-          height={180}
-          placeholder="blur"
-          priority
-        />
-        <div className="relative flex justify-center">
-          <span className="shadow-md rounded-full text-2xl py-2 px-10">
-            [/] 공사중 입니다!
-          </span>
-        </div>
-      </div>
+      <Background />
+      <div className="h-10" />
+      <WaterfallLayout title={`Hello world!`} from="blue" to="gold">
+        <PortfolioTitle />
+      </WaterfallLayout>
+      <WaterfallLayout title={`Projects`} icon="🏆" from="gold" to="red">
+        <PortfolioProjects />
+      </WaterfallLayout>
+      <WaterfallLayout title={`Stacks`} icon="🔥" from="red" to="yellow">
+        <PortfolioTitle />
+      </WaterfallLayout>
+      <WaterfallLayout title={`Interests`} icon="✨" from="yellow" to="yellow">
+        <PortfolioTitle />
+      </WaterfallLayout>
     </Layout>
   );
 }

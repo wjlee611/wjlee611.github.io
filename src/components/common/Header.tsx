@@ -2,7 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import HeaderNavBtn from "./HeaderNavBtn";
 import Link from "next/link";
 import { BsListNested } from "react-icons/bs";
-import { GrClose } from "react-icons/gr";
+import { RxCross2 } from "react-icons/rx";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ThemeSwitch from "./ThemeSwitch";
@@ -45,7 +45,7 @@ export default function Header() {
             className="flex md:hidden items-center justify-center w-16 h-16 text-2xl"
             onClick={() => setIsOpen((prev) => !prev)}
           >
-            {isOpen ? GrClose() : BsListNested()}
+            {isOpen ? RxCross2() : BsListNested()}
           </button>
         </div>
       </header>

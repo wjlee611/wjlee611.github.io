@@ -3,7 +3,7 @@ import ProgressBar from "@badrap/bar-of-progress";
 import "dayjs/locale/ko";
 import dayjs from "dayjs";
 import type { AppProps } from "next/app";
-import { Inter } from "next/font/google";
+import { Nanum_Gothic } from "next/font/google";
 import Head from "next/head";
 import { AnimatePresence } from "framer-motion";
 import Header from "@/components/common/Header";
@@ -11,7 +11,11 @@ import clsWrapper from "@/utils/class-wrapper";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "next-themes";
 
-const inter = Inter({ subsets: ["latin"] });
+const nanumGothic = Nanum_Gothic({
+  weight: ["400", "700", "800"],
+  subsets: ["latin"],
+});
+
 const progress = new ProgressBar({
   size: 2,
   color: "#3b82f6",
@@ -93,8 +97,8 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <ThemeProvider attribute="class">
       <div
         className={clsWrapper(
-          inter.className,
-          "text-center transition-all",
+          nanumGothic.className,
+          "text-center transition-all NanumSquareNeo",
           onTransition ? "w-screen h-screen overflow-x-hidden" : ""
         )}
       >
