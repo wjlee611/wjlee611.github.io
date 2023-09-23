@@ -17,10 +17,10 @@ export default function Home() {
         <PortfolioProjects />
       </WaterfallLayout>
       <WaterfallLayout title={`Stacks`} icon="🔥" from="red" to="yellow">
-        <PortfolioTitle />
+        <span className="text-white">공사중입니다</span>
       </WaterfallLayout>
       <WaterfallLayout title={`Interests`} icon="✨" from="yellow" to="yellow">
-        <PortfolioTitle />
+        <span className="text-white">공사중입니다</span>
       </WaterfallLayout>
     </Layout>
   );

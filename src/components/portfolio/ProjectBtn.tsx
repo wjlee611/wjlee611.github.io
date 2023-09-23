@@ -32,7 +32,7 @@ export default function ProjectBtn({
       animate={isIntersect ? "view" : "notView"}
     >
       <Image
-        className="rounded-3xl"
+        className="rounded-[2rem] w-[160px] h-[160px] aspect-square object-cover"
         width={160}
         height={160}
         src={image}
