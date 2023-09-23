@@ -1,6 +1,9 @@
+import useObserver from "@/hooks/useObserver";
 import clsWrapper from "@/utils/class-wrapper";
 import Image, { StaticImageData } from "next/image";
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
+import { motion } from "framer-motion";
+import { slideToRight1, slideToRight2 } from "@/utils/variants";
 
 interface IProjectBtn {
   image: StaticImageData;
@@ -17,8 +20,17 @@ export default function ProjectBtn({
   isActive = false,
   children,
 }: IProjectBtn) {
+  const targetRef = useRef<HTMLDivElement>(null);
+  const isIntersect = useObserver({ ref: targetRef });
+
   return (
-    <div className="flex flex-col md:flex-row items-start justify-start space-y-3 md:space-y-0 md:space-x-10">
+    <motion.div
+      className="flex flex-col md:flex-row items-start justify-start space-y-3 md:space-y-0 md:space-x-10"
+      ref={targetRef}
+      variants={slideToRight1}
+      initial={false}
+      animate={isIntersect ? "view" : "notView"}
+    >
       <Image
         className="rounded-3xl"
         width={160}
@@ -26,7 +38,12 @@ export default function ProjectBtn({
         src={image}
         alt={image.src}
       />
-      <div className="flex flex-col">
+      <motion.div
+        className="flex flex-col"
+        variants={slideToRight2}
+        initial={false}
+        animate={isIntersect ? "view" : "notView"}
+      >
         <span className="text-white text-2xl font-black">{name}</span>
         <div className="flex space-x-2 my-5">
           <span
@@ -42,7 +59,7 @@ export default function ProjectBtn({
           </span>
         </div>
         {children}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
