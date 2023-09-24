@@ -48,7 +48,7 @@ export default function ProjectBtn({
         <div className="flex space-x-2 my-5">
           <span
             className={clsWrapper(
-              "text-white px-1 rounded-md",
+              "text-white px-1 rounded-md flex justify-center items-center",
               isActive ? "bg-green-500" : "bg-slate-400"
             )}
           >

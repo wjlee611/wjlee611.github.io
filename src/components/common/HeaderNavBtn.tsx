@@ -23,8 +23,12 @@ export default function HeaderNavBtn({ href, text, onClick }: IHeaderNavBtn) {
     <li className="h-full flex items-center list-none relative select-none">
       <Link
         className={clsWrapper(
-          "h-full w-full md:w-auto flex items-center transition-colors py-2 md:my-0",
-          isSelect() ? "text-blue-500" : "",
+          "h-full w-full md:w-auto flex items-center transition-colors py-2 md:my-0 font-bold",
+          isSelect()
+            ? "text-blue-500"
+            : router.asPath === "/"
+            ? "text-white"
+            : "text-black dark:text-white",
           router.asPath === href ? "pointer-events-none" : ""
         )}
         href={href}

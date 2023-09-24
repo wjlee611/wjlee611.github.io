@@ -6,8 +6,11 @@ import { RxCross2 } from "react-icons/rx";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ThemeSwitch from "./ThemeSwitch";
+import clsWrapper from "@/utils/class-wrapper";
+import { useRouter } from "next/router";
 
 export default function Header() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   const resize = () => {
@@ -42,7 +45,12 @@ export default function Header() {
         <div className="flex items-center">
           <ThemeSwitch />
           <button
-            className="flex md:hidden items-center justify-center w-16 h-16 text-2xl"
+            className={clsWrapper(
+              "flex md:hidden items-center justify-center w-16 h-16 text-2xl",
+              router.asPath === "/"
+                ? "text-white"
+                : "text-black dark:text-white"
+            )}
             onClick={() => setIsOpen((prev) => !prev)}
           >
             {isOpen ? RxCross2() : BsListNested()}

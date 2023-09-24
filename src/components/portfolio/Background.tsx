@@ -7,7 +7,7 @@ export default function Background() {
           className="absolute top-52 -right-10 w-96 aspect-square bg-blue-500 bg-opacity-10 rounded-full blur-xl animate-ping"
           style={{ animationDelay: "200ms" }}
         ></li>
-        <li className="absolute -top-full right-0 w-full aspect-square bg-cyan-800 bg-opacity-10 rounded-full blur-xl"></li>
+        <li className="absolute -top-full right-0 w-full aspect-square bg-cyan-600 bg-opacity-10 rounded-full blur-xl"></li>
       </ul>
     </div>
   );

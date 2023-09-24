@@ -2,9 +2,10 @@ import { RefObject, useEffect, useState } from "react";
 
 interface IuseObserver {
   ref?: RefObject<HTMLElement>;
+  threshold?: number;
 }
 
-export default function useObserver({ ref }: IuseObserver) {
+export default function useObserver({ ref, threshold = 0.1 }: IuseObserver) {
   const [isIntersect, setIsIntersect] = useState(false);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function useObserver({ ref }: IuseObserver) {
         },
         {
           rootMargin: "1000% 0px 0px 0px",
-          threshold: 0.1,
+          threshold: threshold,
         }
       );
 
@@ -30,7 +31,7 @@ export default function useObserver({ ref }: IuseObserver) {
     return () => {
       observer.disconnect();
     };
-  }, [ref]);
+  }, [ref, threshold]);
 
   return isIntersect;
 }

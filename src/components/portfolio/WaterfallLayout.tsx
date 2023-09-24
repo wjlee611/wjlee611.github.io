@@ -9,7 +9,7 @@ import {
   zoomIn,
 } from "@/utils/variants";
 
-type Color = "blue" | "red" | "yellow" | "gold";
+type Color = "blue" | "red" | "yellow" | "gold" | "green";
 
 interface IWaterfallLayout {
   children: ReactNode;
@@ -27,7 +27,10 @@ export default function WaterfallLayout({
   to,
 }: IWaterfallLayout) {
   const targetRef = useRef<HTMLDivElement>(null);
-  const isIntersect = useObserver({ ref: targetRef });
+  const isIntersect = useObserver({
+    ref: targetRef,
+    threshold: title === "Projects" ? 0.05 : undefined,
+  });
 
   const colorPicker = (color: Color) => {
     switch (color) {
@@ -39,6 +42,8 @@ export default function WaterfallLayout({
         return "bg-yellow-500";
       case "gold":
         return "bg-yellow-600";
+      case "green":
+        return "bg-green-500";
     }
   };
   const colorFromPicker = (color: Color) => {
@@ -51,6 +56,8 @@ export default function WaterfallLayout({
         return "from-yellow-500";
       case "gold":
         return "from-yellow-600";
+      case "green":
+        return "from-green-500";
     }
   };
   const colorToPicker = (color: Color) => {
@@ -63,6 +70,8 @@ export default function WaterfallLayout({
         return "to-yellow-500";
       case "gold":
         return "to-yellow-600";
+      case "green":
+        return "to-green-500";
     }
   };
 
