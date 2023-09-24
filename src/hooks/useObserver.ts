@@ -5,7 +5,7 @@ interface IuseObserver {
   threshold?: number;
 }
 
-export default function useObserver({ ref, threshold = 0.1 }: IuseObserver) {
+export default function useObserver({ ref, threshold = 0.5 }: IuseObserver) {
   const [isIntersect, setIsIntersect] = useState(false);
 
   useEffect(() => {

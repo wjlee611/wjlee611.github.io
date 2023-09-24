@@ -14,7 +14,7 @@ export default function PortfolioProjects() {
         isActive
         period="2023.01.03 ~ "
       >
-        <span className="flex flex-col text-white space-y-2">
+        <span className="flex flex-col text-white space-y-2 bg-black bg-opacity-30 rounded-md p-2">
           <span>
             오프라인 데이터베이스 기반의 모바일 게임, 명일방주의 정보
             애플리케이션 입니다.
@@ -48,7 +48,7 @@ export default function PortfolioProjects() {
         isActive
         period="2023.06.15 ~ "
       >
-        <span className="flex flex-col text-white space-y-2">
+        <span className="flex flex-col text-white space-y-2 bg-black bg-opacity-30 rounded-md p-2">
           <span>
             서울과학기술대학교 와의 협업으로 진행된 프로젝트로, 친환경
             건축설계를 위한 건축물 패시브 에너지 평가분석 도구입니다.
@@ -70,7 +70,7 @@ export default function PortfolioProjects() {
         isActive
         period="2022.06.25 ~ "
       >
-        <span className="flex flex-col text-white space-y-2">
+        <span className="flex flex-col text-white space-y-2 bg-black bg-opacity-30 rounded-md p-2">
           <span>혼밥하는 사람들을 위한 식사 친구 매칭 서비스 입니다.</span>
           <span>
             지금까지 총 8명의 사람들과 개발한 프로젝트로, 저는 Flutter로 개발된
@@ -98,7 +98,7 @@ export default function PortfolioProjects() {
         name="말하는 사이에 주문 완료!"
         period="2022.08.04 ~ 2022.12.15"
       >
-        <span className="flex flex-col text-white space-y-2">
+        <span className="flex flex-col text-white space-y-2 bg-black bg-opacity-30 rounded-md p-2">
           <span>음성인식 대화형 키오스크 웹앱 입니다.</span>
           <span>
             {"교내 대회 '참빛설계학기' 출품작으로 4명의 팀원과 개발했습니다."}

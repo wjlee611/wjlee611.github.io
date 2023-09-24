@@ -29,7 +29,7 @@ export default function WaterfallLayout({
   const targetRef = useRef<HTMLDivElement>(null);
   const isIntersect = useObserver({
     ref: targetRef,
-    threshold: title === "Projects" ? 0.05 : undefined,
+    threshold: title === "Projects" ? 0.05 : 0.1,
   });
 
   const colorPicker = (color: Color) => {

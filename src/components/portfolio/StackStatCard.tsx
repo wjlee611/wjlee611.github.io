@@ -29,7 +29,7 @@ export default function StackStatCard({ cat, max, value }: IStackStateCard) {
             ? AiOutlineExport()
             : BiGitMerge()}
         </span>
-        <span className="text-white">
+        <span className="text-white text-sm">
           {cat === "favor"
             ? `Favor`
             : cat === "skill"

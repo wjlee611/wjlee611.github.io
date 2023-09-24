@@ -125,9 +125,9 @@ export default function StackCard({ image, name, value }: IStackCard) {
         initial={false}
         animate={isIntersect ? "view" : "notView"}
       >
-        <span className="lg:col-span-2 text-white border-b border-red-500">
-          {name}
-        </span>
+        <div className="lg:col-span-2 text-white border-b border-red-500 flex items-start">
+          <span className="bg-red-500 py-1px px-3 rounded-t-sm">{name}</span>
+        </div>
         <StackStatCard
           cat="favor"
           value={value.favor}
