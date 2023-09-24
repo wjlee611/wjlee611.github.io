@@ -81,7 +81,7 @@ export default function WaterfallLayout({
               animate={isIntersect ? "view" : "notView"}
             />
             <motion.span
-              className="w-8 aspect-square flex items-center ml-1 text-2xl"
+              className="w-8 aspect-square flex items-center justify-center text-2xl"
               variants={zoomIn}
               initial={false}
               animate={isIntersect ? "view" : "notView"}
@@ -89,7 +89,7 @@ export default function WaterfallLayout({
               {icon}
             </motion.span>
             <motion.h2
-              className="w-full flex items-start ml-3 p-2 rounded-lg text-white blur-none font-bold backdrop-blur text-lg md:text-xl"
+              className="flex flex-1 items-start ml-3 p-2 rounded-lg text-white blur-none font-bold backdrop-blur text-lg md:text-xl"
               variants={slideToRight1}
               initial={false}
               animate={isIntersect ? "view" : "notView"}
@@ -99,19 +99,21 @@ export default function WaterfallLayout({
           </div>
         </div>
       ) : null}
-      <div className="w-full flex ml-[14px] mt-2">
+      <div className="w-full flex mt-2">
+        <div className="w-8 h-auto flex items-start justify-center">
+          <motion.div
+            className={clsWrapper(
+              "w-1 rounded-full bg-gradient-to-b bg-grad from-[calc(100%-50px)]",
+              colorFromPicker(from),
+              colorToPicker(to)
+            )}
+            variants={expandToBottom}
+            initial={false}
+            animate={isIntersect ? "view" : "notView"}
+          />
+        </div>
         <motion.div
-          className={clsWrapper(
-            "w-1 mr-8 rounded-full bg-gradient-to-b bg-grad from-[calc(100%-50px)]",
-            colorFromPicker(from),
-            colorToPicker(to)
-          )}
-          variants={expandToBottom}
-          initial={false}
-          animate={isIntersect ? "view" : "notView"}
-        ></motion.div>
-        <motion.div
-          className="py-10"
+          className="py-10 ml-6 flex flex-1"
           variants={slideToRight2}
           initial={false}
           animate={isIntersect ? "view" : "notView"}

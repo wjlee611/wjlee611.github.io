@@ -2,7 +2,7 @@ import { Variants } from "framer-motion";
 
 export const expandToBottom: Variants = {
   view: {
-    height: "auto",
+    height: "100%",
     transition: { delay: 0.3 },
   },
   notView: {

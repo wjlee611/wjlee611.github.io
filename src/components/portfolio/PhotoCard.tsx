@@ -22,7 +22,11 @@ export default function PhotoCard({
         src={image}
         alt={image.src}
       />
-      {text ? <span className="flex justify-center mt-3">{text}</span> : null}
+      {text ? (
+        <span className="flex justify-center mt-3 text-slate-800 text-sm">
+          {text}
+        </span>
+      ) : null}
     </div>
   );
 }

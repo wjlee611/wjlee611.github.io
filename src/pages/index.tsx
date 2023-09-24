@@ -3,7 +3,6 @@ import Background from "@/components/portfolio/Background";
 import PortfolioProjects from "@/components/portfolio/PortfolioProjects";
 import PortfolioTitle from "@/components/portfolio/PortfolioTitle";
 import WaterfallLayout from "@/components/portfolio/WaterfallLayout";
-import Image from "next/image";
 
 export default function Home() {
   return (
