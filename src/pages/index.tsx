@@ -1,6 +1,7 @@
 import Layout from "@/components/common/Layout";
 import Background from "@/components/portfolio/Background";
 import PortfolioProjects from "@/components/portfolio/PortfolioProjects";
+import PortfolioStacks from "@/components/portfolio/PortfolioStacks";
 import PortfolioTitle from "@/components/portfolio/PortfolioTitle";
 import WaterfallLayout from "@/components/portfolio/WaterfallLayout";
 
@@ -16,7 +17,7 @@ export default function Home() {
         <PortfolioProjects />
       </WaterfallLayout>
       <WaterfallLayout title={`Stacks`} icon="🔥" from="red" to="yellow">
-        <span className="text-white">공사중입니다</span>
+        <PortfolioStacks />
       </WaterfallLayout>
       <WaterfallLayout title={`Interests`} icon="✨" from="yellow" to="green">
         <span className="text-white">공사중입니다</span>

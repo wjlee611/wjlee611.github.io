@@ -3,7 +3,7 @@ import clsWrapper from "@/utils/class-wrapper";
 import Image, { StaticImageData } from "next/image";
 import { ReactNode, useRef } from "react";
 import { motion } from "framer-motion";
-import { slideToRight1, slideToRight2 } from "@/utils/variants";
+import { slideToRight1, slideToRight2 } from "@/constants/variants";
 
 interface IProjectBtn {
   image: StaticImageData;

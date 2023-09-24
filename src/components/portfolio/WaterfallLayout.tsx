@@ -7,7 +7,7 @@ import {
   slideToRight1,
   slideToRight2,
   zoomIn,
-} from "@/utils/variants";
+} from "@/constants/variants";
 
 type Color = "blue" | "red" | "yellow" | "gold" | "green";
 
