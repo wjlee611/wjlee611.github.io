@@ -10,6 +10,8 @@ export interface IStackConsts {
   flutter: ITechConsts;
   react: ITechConsts;
   next: ITechConsts;
+
+  MAX: ITechConsts;
 }
 
 export interface ITechConsts {
@@ -54,6 +56,15 @@ export const stackConsts: IStackConsts = {
   flutter: flutterConst,
   react: reactConst,
   next: nextConst,
+
+  MAX: {
+    favor: 100,
+    skill: 100,
+    singleProj: 0,
+    teamProj: 0,
+    releases: 0,
+    contributes: 0,
+  },
 };
 
 export function stackMaxVal(cat: StackCategoty) {

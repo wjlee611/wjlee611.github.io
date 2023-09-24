@@ -1,9 +1,11 @@
 import { StackCategoty } from "@/constants/stackConst";
 import clsWrapper from "@/utils/class-wrapper";
+import { motion } from "framer-motion";
 
 export interface IStackGraph {
   type: StackCategoty;
   value: number;
+  isView: boolean;
 }
 
 export const rotateConverter = (type: StackCategoty) => {
@@ -23,7 +25,7 @@ export const rotateConverter = (type: StackCategoty) => {
   }
 };
 
-export default function StackGraphRed({ type }: IStackGraph) {
+export default function StackGraphRed({ type, isView }: IStackGraph) {
   return (
     <div
       className={clsWrapper(
@@ -33,7 +35,17 @@ export default function StackGraphRed({ type }: IStackGraph) {
     >
       <div className="w-2 h-10 relative">
         <div className="absolute bottom-0 left-0 w-full h-full bg-red-600 bg-opacity-40" />
-        <div className="absolute bottom-0 left-0 w-full h-full bg-red-600" />
+        <motion.div
+          className={clsWrapper(
+            "absolute bottom-0 left-0 w-full bg-red-600",
+            isView ? "h-full" : "h-0"
+          )}
+          style={{
+            transition: isView
+              ? "height 1s cubic-bezier(0.125, 0.755, 0.385, 1.000) 1s"
+              : "",
+          }}
+        />
       </div>
     </div>
   );

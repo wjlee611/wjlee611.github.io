@@ -6,7 +6,7 @@ import nextIcon from "@/../public/images/icon_next.png";
 
 export default function PortfolioStacks() {
   return (
-    <div className="space-y-20">
+    <div className="space-y-10">
       <StackCard
         image={flutterIcon}
         name="Flutter"

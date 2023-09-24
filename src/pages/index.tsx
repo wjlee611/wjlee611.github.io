@@ -22,7 +22,7 @@ export default function Home() {
       <WaterfallLayout title={`Interests`} icon="✨" from="yellow" to="green">
         <span className="text-white">공사중입니다</span>
       </WaterfallLayout>
-      <WaterfallLayout title={`Contacts`} icon="🧤" from="green" to="green">
+      <WaterfallLayout title={`Contacts`} icon="✉️" from="green" to="green">
         <span className="text-white">공사중입니다</span>
       </WaterfallLayout>
     </Layout>
