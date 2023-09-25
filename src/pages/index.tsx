@@ -13,8 +13,11 @@ export default function Home() {
       <WaterfallLayout title={`Hello world!`} from="blue" to="gold">
         <PortfolioTitle />
       </WaterfallLayout>
-      <WaterfallLayout title={`Projects`} icon="🏆" from="gold" to="red">
+      <WaterfallLayout title={`Projects`} icon="🏆" from="gold" to="yellow">
         <PortfolioProjects />
+      </WaterfallLayout>
+      <WaterfallLayout title={`History`} icon="⭐️" from="yellow" to="red">
+        <span className="text-white">공사중입니다</span>
       </WaterfallLayout>
       <WaterfallLayout title={`Stacks`} icon="🔥" from="red" to="yellow">
         <PortfolioStacks />
