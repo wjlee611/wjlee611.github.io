@@ -29,7 +29,7 @@ export default function Giscus() {
     scriptElem.setAttribute("data-input-position", "bottom");
     scriptElem.setAttribute("data-theme", theme);
     scriptElem.setAttribute("data-lang", "en");
-    scriptElem.setAttribute("data-loading", "lazy");
+    // scriptElem.setAttribute("data-loading", "lazy");
     scriptElem.setAttribute("crossorigin", "anonymous");
 
     ref.current.appendChild(scriptElem);

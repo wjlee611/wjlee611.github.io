@@ -1,0 +1,145 @@
+---
+title: 'Decorator Pattern'
+description: 'Decorator 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Decorator Pattern
+draft: false
+date: 2023-10-08 14:49:53
+---
+
+## 필요성
+
+키오스크 개발자라고 가정하고 음료를 정의할 인터페이스를 만들어보자.
+
+```java:Beverage.java
+public abstract class Beverage {
+  private String description;
+
+  public Beverage(String des) {
+    this.description = des;
+  }
+
+  public String getDescription() {
+      return description;
+  }
+  public abstract double cost();
+}
+```
+
+그렇다면 음료들은 이 클래스를 상속받아서 구현하면 될 것이다.
+하지만 이 경우에 다음과 같은 문제점이 발생할 수 있다.
+
+아아, 아아 샷추가, 아아 우유추가 등 여러 `베리에이션 음료`에 대해 모두 **각각** 클래스로 구현해야 한다는 점이다.
+단순히 샷추가나 우유추가의 경우에는 가격만 좀 더 받으면 될터인데 이를 각각 따로 구현하는거는 코드의 중복 뿐만 아니라, 유지보수도 어렵게 만든다.
+
+### OCP
+
+그렇다면 Beverage에서 옵션도 관리하게 하면 되지 않을까?
+
+```diff-java:Beverage.java
+  public abstract class Beverage {
+    private String description;
++   private boolean milk;
++   private boolean soy;
+
+    public Beverage(String des) {
+      this.description = des;
+    }
+
+    public abstract String getDescription() {
+      return description;
+    }
+    public abstract double cost();
+
++   setMilk();
++   hasMilk();
++   setSoy();
++   hasSoy();
+  }
+```
+
+처음 생각해볼 수 있는 간단한 해결법이지만, 좋은 방법은 아니다.
+다른 옵션을 추가하거나 옵션에 따른 가격 변동을 수정하려는 경우에는 Beverage 클래스에 대한 전면적인 수정이 필요해지기 때문이다.
+
+`새로운 옵션`에 대해서는 **변수 추가 및 get, set을 추가**해야 하고,
+`가격 변동`의 경우에는 **cost 함수가 전면적으로 수정**되어야 한다.
+이 과정에 Beverage를 상속받은 `모든 클래스`에서 일어나야 한다.
+
+이런 경우를 방지하기 위해 `OCP` 방법론을 준수하여 코딩하는게 좋다.
+
+OCP는 Open-Closed Principle의 약어로, 확장엔 유연하게, 변경엔 엄격하게 디자인 해야함을 추구하는 원칙이다.
+
+## Decorator Pattern
+
+이를 해결하기 위해 `Decorator Pattern`을 사용할 수 있다.
+
+우선 Beverage는 다시 원상복구를 시키고, 옵션에 대한 클래스를 구현하자.
+
+```java:CondimentDecorator.java
+public abstract class CondimentDecorator extends Beverage {
+  public abstract String getDescription();
+}
+```
+
+이제 음료는 Beverage를 상속받아 구현하고, 옵션은 CondimentDecorator를 상속받아 구현하면 된다.
+계속 예시를 살펴보며 이해하자.
+
+```java:Espresso.java
+public class Espresso extends Beverage {
+  public Espresso() {
+    description = 'Espresso';
+  }
+
+  public double cost() {
+    return 0.89;
+  }
+}
+```
+
+```java:Milk.java
+public class Milk extends CondimentDecorator {
+  Beverage beverage;
+
+  public Milk(Beverage beverage) {
+    this.beverage = beverage;
+  }
+
+  public String getDescription() {
+    return beverage.getDescription() + ', Milk';
+  }
+
+  public double cost() {
+    return beverage.cost() + 0.20;
+  }
+}
+```
+
+이런식으로 구현한다면 사용할 때는 Espresso를 Milk가 감싸는 방식으로 옵션을 추가할 수 있게된다.
+
+```java:Kiosk.java
+public class Kiosk {
+  public static void main(String args[]) {
+    Beverage espressoWithMilk = new Milk(new Espresso());
+    System.out.println(espressoWithMilk.getDescription() + “ $” + espressoWithMilk.cost());
+    ...
+  }
+}
+```
+
+> Espresso, Milk $1.09
+
+실제로 Java의 I/O를 사용하다보면 이런 코드를 많이 본 적이 있을 것이다.
+
+```java:FileIO.java
+InputStream in = new LineNumberInputStream(
+                    new BufferedInputStream(
+                       new FileInputStream('text.txt')));
+```
+
+이런 Stream도 모두 Decorator Pattern이 적용된 것이다.
+
+## 결론
+
+Decorator Pattern은 `새로운 기능이 추가`되거나, `적용 순서를 자유롭게` 해야하는 경우에 사용하는 것이 좋다.
