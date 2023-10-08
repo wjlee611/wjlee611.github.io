@@ -17,7 +17,7 @@ export default function PostCard({ post, link }: IPostCard) {
       </h4>
       <span>{post.description}</span>
       <span className="absolute bottom-0 -right-1 bg-gradient-to-r from-blue-600 to-blue-300 bg-clip-text font-bold text-transparent opacity-40 italic px-3">
-        {post.date}
+        {post.date.split("/")[0]}
       </span>
     </Link>
   );

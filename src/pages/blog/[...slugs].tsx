@@ -1,11 +1,12 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { Post, getAllPosts } from "../../libs/posts";
+import { Post, getAllPosts, getPosts } from "../../libs/posts";
 import { parseToc, serializeMdx } from "@/libs/mdx";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Layout from "@/components/common/Layout";
 import BlogToc, { Section } from "@/components/blog/BlogToc";
 import Giscus from "@/components/blog/Giscus";
 import YT from "@/components/blog/YT";
+import OtherPosts from "@/components/blog/OtherPosts";
 
 const components = { YT };
 
@@ -23,6 +24,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const slug = `${[...slugs].join("/")}`;
   const post = getAllPosts().find((post) => post.slug === slug);
+  const posts = getPosts(slug.split("/")[0], { withIdx: true });
 
   if (!post) {
     return {
@@ -35,6 +37,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post,
+      posts,
       mdx,
       toc: parseToc(post.content),
     },
@@ -43,11 +46,12 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
 interface IPostPage {
   post: Post;
+  posts: Post[];
   mdx: MDXRemoteSerializeResult;
   toc: Section[];
 }
 
-export default function PostPage({ post, mdx, toc }: IPostPage) {
+export default function PostPage({ post, posts, mdx, toc }: IPostPage) {
   return (
     <Layout>
       <div className="flex flex-col items-start pb-16">
@@ -73,7 +77,7 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
         </section>
         <footer className="w-full flex flex-col mt-10">
           <span className="text-blue-400 italic text-start">
-            {post.date} 에 작성되었어요.
+            {post.date} 에 작성을 시작했어요.
           </span>
           <div className="w-full flex items-start mt-5 mb-10 space-x-5">
             <span>Tag</span>
@@ -88,6 +92,7 @@ export default function PostPage({ post, mdx, toc }: IPostPage) {
               ))}
             </ul>
           </div>
+          <OtherPosts post={post} posts={posts} />
           <Giscus />
         </footer>
       </div>

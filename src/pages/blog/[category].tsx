@@ -3,7 +3,6 @@ import PostCard from "@/components/blog/PostCard";
 import Layout from "@/components/common/Layout";
 import { Post, getAllCategories, getPosts } from "@/libs/posts";
 import { GetStaticPaths, GetStaticProps } from "next";
-import Link from "next/link";
 
 export const getStaticPaths: GetStaticPaths = () => {
   const categories = getAllCategories();

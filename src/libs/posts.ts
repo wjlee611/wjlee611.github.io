@@ -37,7 +37,7 @@ const parsePost = (postPath: string): Post | undefined => {
     return {
       ...grayMatter,
       tags: grayMatter.tags.filter(Boolean),
-      date: dayjs(grayMatter.date).locale("ko").format("YYYY-MM-DD / HH:MM"),
+      date: dayjs(grayMatter.date).locale("ko").format("YYYY-MM-DD / HH:mm"),
       content,
       slug: path.relative(POSTS_PATH, postPath).replace(".mdx", ""),
       readingMinutes: Math.ceil(readingTime(content).minutes),
