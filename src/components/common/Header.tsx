@@ -27,12 +27,12 @@ export default function Header() {
 
   return (
     <AnimatePresence>
-      <header className="fixed top-0 left-0 right-0 mx-anuo w-screen h-16 flex justify-between items-center px-10 backdrop-blur bg-blue-200 bg-opacity-20 z-50">
+      <header className="fixed top-0 left-0 right-0 mx-anuo w-screen h-12 md:h-16 flex justify-between items-center px-2 md:px-10 backdrop-blur bg-blue-200 bg-opacity-20 z-50">
         <div className="h-full flex items-center">
           <Link
             onClick={() => setIsOpen(false)}
             href="/"
-            className="h-16 aspect-square flex justify-center items-center text-3xl select-none cursor-pointer"
+            className="h-full aspect-square flex justify-center items-center text-3xl select-none cursor-pointer"
           >
             🫧
           </Link>
@@ -42,11 +42,11 @@ export default function Header() {
             <HeaderNavBtn href="/arkhive" text="Arkhive" />
           </nav>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center h-full">
           <ThemeSwitch />
           <button
             className={clsWrapper(
-              "flex md:hidden items-center justify-center w-16 h-16 text-2xl",
+              "flex md:hidden items-center justify-center w-16 h-full text-2xl",
               router.asPath === "/"
                 ? "text-white"
                 : "text-black dark:text-white"
@@ -71,9 +71,9 @@ export default function Header() {
         <motion.nav
           className="w-80 flex flex-col fixed right-0 left-0 mx-auto backdrop-blur bg-white bg-opacity-20 rounded-md px-4 divide-y divide-white border-2 border-white border-opacity-30 z-20"
           key="header_nav"
-          initial={{ top: "2rem", opacity: 0 }}
-          animate={{ top: "5rem", opacity: 1 }}
-          exit={{ top: "2rem", opacity: 0 }}
+          initial={{ top: "0rem", opacity: 0 }}
+          animate={{ top: "4rem", opacity: 1 }}
+          exit={{ top: "0rem", opacity: 0 }}
         >
           <HeaderNavBtn
             href="/"

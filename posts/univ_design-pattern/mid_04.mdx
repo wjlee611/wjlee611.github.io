@@ -1,0 +1,100 @@
+---
+title: 'Singleton Pattern'
+description: 'Singleton Pattern 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Singleton Pattern
+draft: false
+date: 2023-10-08 21:31:14
+---
+
+## 필요성
+
+시스템 전체에서 하나의 클래스가 하나의 인스턴스만 생성해야 하는 경우 사용한다.
+
+## Singleton Pattern
+
+```java:Singleton.java {2, 4} showLineNumbers
+  public class Singleton {
+    private static Singleton _instance;
+
+    private Singleton() {}
+
+    public static Singleton getInstance() {
+      if (_instance == null) {
+        _instance = new Singleton();
+      }
+      return _instance;
+    }
+  }
+```
+
+기존에 봐오던 클래스들과 많이 다르게 클래스 내부에 본인의 인스턴스를 저장하는 공간이 있으며,
+**생성자가 외부로 노출되지 않는다**.
+
+인스턴스 생성은 오직 `getInstance()` 메서드 호출을 통해서만 이루어지며,
+내부적으로 null값인 경우에만 인스턴스를 생성하기 때문에 `1개의 인스턴스만 생성`이 된다.
+
+### Multithreading
+
+하지만 멀티스레딩 환경에서는 인스턴스가 2개 이상 생성되는 경우가 발생할 수 있다.
+`Line 7`과 `Line 8` 사이에서 `Context switching`이 일어나는 경우가 그러하다.
+
+이런 경우를 막기 위해서 getInstance()는 `동기화 처리`를 해주는 편이 좋다.
+
+```java:Singleton.java {2}
+public class Singleton {
+  private static Singleton _instance = new Singleton();
+  ...
+}
+```
+
+이렇게 하면 프로그램 실행시점에 인스턴스가 생성되어 반드시 1개의 인스턴스만 생성할 수 있다.
+하지만, 해당 클래스의 생성시점을 제어할 수 없기에 프로그램 성능이 저하되는 문제가 발생할 수 있다.
+
+```java:Singleton.java {6}
+  public class Singleton {
+    private static Singleton _instance;
+
+    private Singleton() {}
+
+    public static synchronized Singleton getInstance() {
+      if (_instance == null) {
+        _instance = new Singleton();
+      }
+      return _instance;
+    }
+  }
+```
+
+java처럼 동기화 키워드를 제공하는 경우 인스턴스를 생성하는 함수를 동기화 걸어주면 된다.
+하지만 이 경우에도 해당 함수가 매우 무거운 기능을 수행하는 경우에는 동기화 시간이 매우 길어져 성능 저하의 원인이 될 수 있다.
+
+
+```java:Singleton.java {6}
+  public class Singleton {
+    private volatile static Singleton _instance;
+
+    private Singleton() {}
+
+    public static Singleton getInstance() {
+      if (_instance == null) {
+        synchronized (Singleton.class) {
+          if (_instance == null) {
+            _instance = new Singleton();
+          }
+        }
+      }
+      return _instance;
+    }
+  }
+```
+
+위의 코드는 인스턴스 생성 함수 내부에서 정확히 인스턴스를 생성하는 부분만 동기화되기 때문에
+성능상의 이슈도 없앨 수 있다.
+
+## 결론
+
+필요성과 같다.
+시스템 전체에서 하나의 클래스가 하나의 인스턴스만 생성해야 하는 경우 사용하자.

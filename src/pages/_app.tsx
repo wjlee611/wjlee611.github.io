@@ -34,7 +34,6 @@ export default function App({ Component, pageProps, router }: AppProps) {
   const [onTransition, setOnTransition] = useState(false);
 
   const start = () => {
-    window.scroll(0, 0);
     if (onProgress) {
       return;
     }
@@ -116,6 +115,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
           mode="wait"
           initial={false}
           presenceAffectsLayout={true}
+          onExitComplete={() => window.scrollTo(0, 0)}
         >
           <Component {...pageProps} key={router.asPath} />
         </AnimatePresence>
