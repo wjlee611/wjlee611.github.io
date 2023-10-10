@@ -6,13 +6,15 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
 import remarkBreaks from "remark-breaks";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { Toc } from "@/components/blog/BlogToc";
 
 export const serializeMdx = (source: string) => {
   return serialize(source, {
     parseFrontmatter: true,
     mdxOptions: {
-      remarkPlugins: [remarkToc, remarkGfm, remarkBreaks],
+      remarkPlugins: [remarkToc, remarkGfm, remarkBreaks, remarkMath],
       rehypePlugins: [
         rehypeSlug,
         rehypeCodeTitles,
@@ -25,6 +27,7 @@ export const serializeMdx = (source: string) => {
             },
           },
         ],
+        rehypeKatex,
       ],
       format: "mdx",
     },

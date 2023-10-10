@@ -13,6 +13,7 @@ import { ThemeProvider } from "next-themes";
 
 const nanumGothic = Nanum_Gothic({
   weight: ["400", "700", "800"],
+  preload: true,
   subsets: ["latin"],
 });
 
@@ -98,7 +99,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
       <div
         className={clsWrapper(
           nanumGothic.className,
-          "text-center transition-all NanumSquareNeo",
+          "text-center transition-all",
           onTransition ? "w-screen h-screen overflow-x-hidden" : ""
         )}
       >

@@ -5,6 +5,10 @@ export default function Document() {
     <Html lang="ko">
       <Head>
         <link rel="icon" href="/images/icon_circle.png" />
+        <link
+          href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+          rel="stylesheet"
+        />
         <meta name="description" content="웅덩이" />
         <meta name="apple-mobile-web-app-title" content="웅덩이" />
         <meta name="application-name" content="웅덩이" />

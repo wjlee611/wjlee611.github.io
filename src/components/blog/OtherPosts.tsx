@@ -35,8 +35,10 @@ export default function OtherPosts({ post, posts }: IOtherPosts) {
                 <li
                   key={idx}
                   className={clsWrapper(
-                    "w-full flex flex-1 group border-2 border-blue-900 bg-blue-500 bg-opacity-70 text-white",
-                    isPrevPost ? "" : "col-start-2"
+                    "w-full flex flex-1 group from-transparent to-blue-500 text-white",
+                    isPrevPost
+                      ? "bg-gradient-to-l rounded-l-lg"
+                      : "bg-gradient-to-r rounded-r-lg col-start-2"
                   )}
                 >
                   <Link
@@ -50,8 +52,8 @@ export default function OtherPosts({ post, posts }: IOtherPosts) {
                       className={clsWrapper(
                         "text-3xl px-5 transition-transform",
                         isPrevPost
-                          ? "group-hover:-translate-x-5"
-                          : "group-hover:translate-x-5"
+                          ? "group-hover:-translate-x-3"
+                          : "group-hover:translate-x-3"
                       )}
                     >
                       {isPrevPost ? IoIosArrowBack() : IoIosArrowForward()}
@@ -71,21 +73,41 @@ export default function OtherPosts({ post, posts }: IOtherPosts) {
             })}
         </ol>
       )}
-      <h3 className="mt-5">
-        <span className="bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text text-transparent font-bold drop-shadow">
-          {posts.findLast((post) => post.slug.endsWith("/index"))?.title}
-        </span>
-        <span>의 다른 글</span>
-      </h3>
-      <ol>
-        {posts
-          .filter((post) => !post.slug.endsWith("/index"))
-          .map((post, idx) => (
-            <li key={idx}>
-              <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-            </li>
-          ))}
-      </ol>
+      <div className="w-full bg-gradient-to-br from-blue-400 to-blue-950 mt-5 rounded-md overflow-hidden">
+        <h3 className="bg-black bg-opacity-50 px-1 py-3">
+          <span className="bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text text-transparent font-bold drop-shadow">
+            {posts.findLast((post) => post.slug.endsWith("/index"))?.title}
+          </span>
+          <span className="text-white">의 다른 글</span>
+        </h3>
+        <ol className="w-full p-1 space-y-1">
+          {posts
+            .filter((post) => !post.slug.endsWith("/index"))
+            .map((postItem, idx) => (
+              <li
+                key={idx}
+                className={clsWrapper(
+                  "w-full",
+                  post.slug == postItem.slug
+                    ? "bg-black bg-opacity-20 rounded-md"
+                    : ""
+                )}
+              >
+                <Link
+                  href={`/blog/${postItem.slug}`}
+                  className={clsWrapper(
+                    "w-full flex justify-center text-white",
+                    post.slug == postItem.slug
+                      ? "before:content-['🫧'] before:mr-2 after:content-['🫧'] after:ml-2"
+                      : ""
+                  )}
+                >
+                  {postItem.title}
+                </Link>
+              </li>
+            ))}
+        </ol>
+      </div>
     </div>
   );
 }
