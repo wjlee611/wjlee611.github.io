@@ -59,5 +59,5 @@ export default function Giscus() {
     );
   }, [router.asPath]);
 
-  return <section ref={ref} />;
+  return <section ref={ref} className="w-full self-center" />;
 }
