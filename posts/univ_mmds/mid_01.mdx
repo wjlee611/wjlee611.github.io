@@ -4,7 +4,10 @@ description: "분산 파일관리 시스템에 관련한 기초 지식을 배웁
 icon: ''
 image: ''
 tags:
-  - 
+  - 분산 파일관리
+  - Chunk
+  - Map
+  - Reduce
 draft: false
 date: 2023-10-19 14:13:55
 ---
@@ -65,7 +68,7 @@ Map, Group by Key(보통 자동으로 일어남), Reduce의 3단계로 이루어
 우선 개발자가 Map 함수를 작성한다.
 Map 함수는 읽은 데이터를 처리하기 위해 `key-value pair`로 변환하는 작업을 수행하게 된다.
 
-Spark 같은 라이브러리를 사용하면 해당 라이브러리에서 사용 가능한 규격으로 데이터를 처리해야 하는데 이 과정이 좀 까다로울 수 있다.
+하지만 MapReduce에서 사용 가능한 규격으로 데이터를 처리해야 하는데 이 과정이 좀 까다로울 수 있다.
 
 추가로 이 이후에 생성된 key값을 이용해서 해싱같은 방식을 이용해 생성된 페어를 Reduce를 수행할 컴퓨터로 보내게 된다.
 
@@ -90,3 +93,88 @@ Group by Key는 정렬 및 그루핑을 해야하기 때문에 상대적으로 �
 
 반면에 `Reduce worker`가 다운된 경우에는 일이 진행 중인 경우에만 다른 worker에게 일을 처음부터 재시작하도록 한다.
 Reduce일이 완료된 경우, 그 결과는 중요한 데이터이니 `분산 저장`하기 때문에 완료된 경우에 다운되어도 재시작할 필요가 없는 것이다.
+
+### Cost Measure
+
+MapReduce 내부적으로 사용되는 알고리즘의 비용을 측정해보자.
+
+1. Communication cost
+  모든 프로세스의 **I/O bytes**
+> (아래 항목을 모두 더하면 됌)
+> - 입력 파일 사이즈
+> - 2 $\times$ Map process &rarr; Reduce process 로 이동한 파일 사이즈 (2를 곱한 이유는 Map, Reduce 2개이기 때문)
+> - Reduce process에서 나온 출력 사이즈의 합
+2. Elapsed communication cost
+  Communication cost 중 가장 큰(peak) 비용 (정확히는 파일 사이즈가 가장 큰 입력 파일 기준)
+  &rarr; 이 비용이 작을수록 병렬(분산)화가 잘 되었다는 뜻이다.
+3. (Elapsed) Computation cost
+  1, 2와 동일, 단, 기준이 byte 단위가 아닌 **I/O 시간** 단위 기준임.
+
+<tip>
+  대부분의 클라우드 서비스는 Communication cost 기준으로 비용이 청구됌.
+  (Elapsed는 기준은 아님)
+</tip>
+
+---
+
+## Problems Suited for MapReduce
+
+Spark과 같은 라이브러리 말고 MapReduce만 사용하기에도 충분한 문제들을 알아보자.
+보통 데이터 `순차탐색` 문제나, `비 실시간`으로 처리되어도 상관없는 여유로운 작업에 적합하다.
+
+### Host size
+
+url로 부터 host를 추출하고, 해당 호스트에서 제공하는 많고 거대한 데이터의 총 크기(용량)을 알고싶을 때 사용할 수 있다.
+
+> (host1, size1)
+> (host2, size2)
+> ...
+
+### Language Model
+
+언어 모델 개발시에도 이용할 수 있다.
+
+> 5개의 단어 뭉치가 문서에서 얼마나 등장하는지
+> (5-word seq, count)
+
+이런 경우도 map, reduce로 간단하게 만들 수 있다.
+
+### join
+
+join 연산도 MapReduce로 할 수 있다.
+
+![231019-155529](/posts/mid_01/231019-155529.png)
+
+$R(A,B) \Join S(B,C)$를 `natural join`한다로 해보자.
+
+> `Map`
+> 1. join에 사용될 column을 key로 사용하는 key-value 페어로 만든다.
+>
+>   ($b_1$, ($a_1$, R))
+>   ($b_1$, ($a_2$, R))
+>   ($b_2$, ($a_3$, R))
+>   ($b_3$, ($a_4$, R))
+>   ($b_2$, ($c_1$, S))
+>   ($b_2$, ($c_2$, S))
+>   ($b_3$, ($c_3$, S))
+>
+> 2. 키값을 해싱한 후 Reduce 프로세스로 보낸다.
+
+> `Reduce`
+> 1. Reduce를 진행한다.
+>
+>   ($h(b_1)$, [($a_1$, R), ($a_2$, R)])
+>   ($h(b_2)$, [($a_3$, R), ($c_1$, S), ($c_2$, S)])
+>   ($h(b_3)$, [($a_4$, R), ($c_3$, S)])
+>
+> 2. values에 R-S로 되어있는 value들만 묶어서 (a,b,c)로 출력한다.
+>   (R-R, S-S를 제외하기 위해서 value pair에 R, S를 포함시킨 것이다)
+>
+>   ($a_3$, $b_2$, $c_1$)
+>   ($a_3$, $b_2$, $c_2$)
+>   ($a_4$, $b_3$, $c_3$)
+
+### Not Suited
+
+적합하지 않은 문제상황은 뭐가 있을까?
+graph 탐색이나, ML에서의 `비 순차탐색` 하는 경우에는 적합치 않다.

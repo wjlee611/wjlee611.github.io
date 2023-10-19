@@ -1,0 +1,82 @@
+---
+title: 'Spark 개념'
+description: 'MapReduce 모델의 확장판, Spark에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Spark
+  - RDD
+draft: false
+date: 2023-10-19 15:04:11
+---
+
+## MapReduce 문제점
+
+기존 MapReduce 모델의 문제점은 데이터 복제, Disk I/O 등의 오버헤드가 크다는 점이었다.
+
+하지만, ranks를 2개(map, reduce)로 나누어 관리하여 한 반향으로 데이터를 흐르게 만들어 
+시스템이 다운될 경우 재시작의 효율성이 올라가는 점도 고려하여 구현되었다.
+(단방향으로 흐르기에 처리 실패가 발생한 지점부터 다시 처리하면 됌)
+
+그러나, rank가 2개라 모든 문제를 map-reduce 패턴으로 묘사하기가 쉽지 않다는 점도 있었다.
+
+## Spark
+
+스파크는 오늘날 가장 많이 쓰이는 Data-Flow system으로 MapReduce에 비해 여러 부분에서 개선이 이루어졌다.
+
+1. rank를 2개로 제한하지 않음.
+  map, reduce 외의 tasks, ranks와 같은 여러 단계를 허용함.
+2. Map, Reduce 외의 별도의 유용한 함수 제공.
+3. 바로 디스크에 중간 결과를 저장하지 않고, 메모리에 캐싱하기도 함.
+  적당한 크기의 중간 결과는 메모리에 캐싱하기에 속도로 보다 빠르다
+4. MapReduce와 마찬가지로 단방향으로 데이터가 흐르는 DAGs 형식을 따른다.
+  (Directed Acycle Graphs)
+5. 여러 언어와 api를 제공하고, 오픈소스이며 호환성도 좋다.
+
+<tip>
+  `vs. Hadoop MapReduce`
+  Spark이 더 빠른대신 메모리 사용량도 더 많다.
+  Spark에서 제공하는 api가 더 많아 사용하기에 더 편하다.
+  둘 다 map-reduce 부분에서는 성능차이는 없다.
+</tip>
+
+### RDD
+
+Resilient Distributed Dataset의 약어로 Spark에서는 큰 데이터를 RDD 라는 청크로 쪼개어 key-value 페어로 저장한다.
+즉, RDD가 여러개의 클러스터에 분산 저장되는데, 가장 큰 특징은 RDD는 **읽기 전용**이라는 점이다.
+그렇기에 **파일로부터** RDD를 얻어오기도 하며, **RDD로부터** 새로운 RDD를 만드는 식으로 작업된다.
+또한, RDD는 일반적으로 **메모리에 캐싱**되며, 필요에 따라 디스크에 저장하기도 한다.
+
+<tip>
+  `DataFrame`
+  RDD와는 다르게 데이터들이 테이블 형태로 저장되먀 column별로 이름도 있다.
+  <br />
+  `DataSet`
+  DF의 상위호환으로 타입 세이프, 객체지향 프로그래밍 인터페이스를 지원하며, 컴파일 타임에 에러도 잡아낼 수 있다.
+</tip>
+
+### Transformations
+
+RDD에서 새로운 RDD로의 변환을 Transformations라고 하는데, `map`, filter, join, union, intersection, distinct와 같은 변환이 있다.
+
+중요한 점은 이러한 변환은 `Lazy evaluation` 하게 동작한다는 점인데, 이게 무슨 말이냐면
+뭔가를 지시를 해도 실제로 수행을 하지 않는다는 뜻이다.
+지시를 하면 지시 사항을 기록하다가 사용자가 실제로 값을 요청시 기록된 요청을 최적화 알고리즘을 적용하여 한 번에 실행하기 때문에 효율적으로 동작하게 된다.
+
+### Actions
+
+Lazy evaluation 중 실제로 동작을 수행하게 하는 명령이다.
+count, collect, `reduce`, save 와 같은 명령이 있다.
+
+### Task Scheduler (General DAGs)
+
+![231019-153939](/posts/mid_02/231019-153939.png)
+
+Spark 스케쥴러는 스마트하게 동작하는데 그 특징은 다음과 같다.
+
+1. 파이프라인 함수를 제공한다.
+  Stage 1, Stage 2와 같이 여러 단계를 추상화하여 하나의 단계로 취급해 성능을 최적화 한다.
+2. 감당 가능한 크기의 데이터는 캐싱한다.
+  데이터를 캐싱하여 재사용성을 높이고, 속도도 빠르게 한다.
+3. key값 분포상태를 파악하여 불필요한 shuffle을 피한다.
+  일례로 A &rarr; B로 넘어가며 키 값이 정렬되었으니, B &rarr; F로 넘어갈때는 불필요한 셔플을 하지 않음.
