@@ -1,0 +1,185 @@
+---
+title: 'Association Rules'
+description: '빅데이터에서 연관 규칙을 찾아내는 방법에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - 
+draft: false
+date: 2023-10-20 20:08:40
+---
+
+## Application
+
+연관 규칙을 응용할 수 있는 분야를 살펴보면서 대략적인 이해와 필요성에 대해 알아보자.
+
+![231020-201233](/posts/mid_04/231020-201233.png)
+
+장을볼 때 각 장바구니에 어떤 물건을 샀는지를 나타내는 표이다.
+이 표를 간단하게 분석해보면, `Milk`를 산 사람은 대체로 `Coke`를 사는 경향이 있고, `Diaper, Milk`를 동시에 산 사람은 대체로 `Beer`를 산 경향이 있는걸로 보인다.
+이렇게 사람들의 구매 경향을 분석할 때 사용하기도 한다.
+
+또한 문서 상에서 **\{the\} &rarr; \{cat\}** 이라는 규칙이 있다면 the 라는 단어 뒤에는 대체적으로 cat 이라는 단어가 나온다는 뜻으로, 자연어처리시 문법을 파악하고 학습시키는데 도움이 될 수도 있다.
+
+그 외에도 여러 분야에서 활용될 수 있지만, 섣부른 일반화는 안된다.
+예로 들어 **비타민C를 많이 먹는 사람들은 불면증을 겪는 경향이 있다**는 규칙을 발견했다면, **비타민C를 안먹는 경우**에도 불면증 경향이 있는지 검사해봐야 확실해는 것이다.
+
+## Frequent Itemset
+
+Frequent Itemset을 구하는 방법은 [**`저번 포스트`**](https://wjlee611.github.io/blog/univ_mmds/mid_03)에서 알아봤으니, 이젠 용어과 수식을 통해 연관 규칙을 정의하는 것을 알아보자.
+
+### Support
+
+**Support for itemset I** 라고 한다면 itemset I가 등장한 횟수를 의미한다.
+전체 basket에서 itemset I가 등장한 횟수를 카운트 하면 된다.
+이 때, Support threshold S 보다 크다면 빈번하다고 판단하게 되는 것이다.
+
+| Baskets | m(ilk), c(oke), p(epsi), b(read), j(am) |
+| --- | --- |
+| $B_1$ = **\{m, c, b\}** | $B_2$ = **\{m, p, j\}** |
+| $B_3$ = **\{m, b\}** | $B_4$ = **\{c, j\}** |
+| $B_5$ = **\{m, p, b\}** | $B_6$ = **\{m, c, b, j\}** |
+| $B_7$ = **\{c, b, j\}** | $B_8$ = **\{b, c\}** |
+
+예로 들어 위와 같이 목록들이 존재하고, Support threshold가 `3 baskets` 라고 주어진다면,
+Frequent itemset은 아래와 같이 나오게 된다.
+
+> **\{m\}, \{c\}, \{b\}, \{j\}, \{m, b\}, \{b, c\}, \{c, j\}**
+
+## Association Rules
+
+**특정 집합($I$)이 등장할 때 $j$ 하는 경향이 있다** 라는 연관 규칙을 수식화 하면 아래와 같이 표현이 가능하다.
+
+> $\{i_1, \; i_2, \; ,... \; , i_k\}$ &rarr; $j$
+
+### Confidence
+
+이 떄, 그 경향에 대한 신뢰도, `Confidence`는 아래와 같이 수식화 할 수 있다.
+
+$$
+conf(I \rightarrow j) = \frac{support(I \cup j)}{support(I)}
+$$
+
+즉 조건부에 해당하는 itemset이 등장할 확률 기반으로 itemset + j 가 동시에 등장할 확률을 구하면 되는 것이다.
+
+### Interest
+
+하지만 신뢰도가 높다고 반드시 의미있는 규칙이 발견된 것은 아니다.
+
+예로 들어 **X &rarr; milk** 라는 규칙을 발견했다고 가정하자.
+그러나, 굳이 X가 아니더라고 그냥 milk는 많이 사기때문에 둘 사이에 연관성이 깊다고 판단하기에는 무리가 있다.
+
+이 떄문에 `Interest`의 개념이 존재한다.
+
+$$
+Interest(I \rightarrow j) = | conf(I \rightarrow j) - Pr[j] | \\
+Pr[j] = \frac{conf(j)}{표본 \; 수}
+$$
+
+흥미도는 I 신뢰도에서 j가 등장할 확률을 뺀 값의 절댓값과 같다.
+
+보통 해당 값이 `0.5보다 크다`면 해당 규칙이 의존성이 있다는 의미가 된다.
+만약 `-0.5보다 작은` 경우에도 의존성이 있다는 의미가 있는데 이 경우에는 **I, j를 둘 다 사는 경우는 없다**는 뜻으로 해석할 수 있다.
+
+| Baskets | m(ilk), c(oke), p(epsi), b(read), j(am) |
+| --- | --- |
+| $B_1$ = **\{m, c, b\}** | $B_2$ = **\{m, p, j\}** |
+| $B_3$ = **\{m, b\}** | $B_4$ = **\{c, j\}** |
+| $B_5$ = **\{m, p, b\}** | $B_6$ = **\{m, c, b, j\}** |
+| $B_7$ = **\{c, b, j\}** | $B_8$ = **\{b, c\}** |
+
+위애서 예시로 든 baskets에서 다음과 같은 연관 규칙을 찾았다고 해보자.
+
+> **\{m, b\} &rarr; c**
+>
+> $support(\{m, b\} \cup c)$ = **2** (m, b, c 동시 등장 횟수)
+> $support(\{m, b\})$ = **4** (m, b 동시 등장 횟수)
+> $conf(\{m, b\} \rightarrow c)$ = 2/4 = **0.5**
+> $Interest(\{m, b\} \rightarrow c)$ = | 0.5 - 5/8 | = **1/8**
+
+즉, 이 경우에는 Interest가 낮기 때문에 그다지 의미 없는 규칙이라는 뜻이다.
+
+### Mining Association Rules
+
+1. 모든 빈발 항목 집합 I를 찾는다.
+  (이건 [**`이전 포스트`**](https://wjlee611.github.io/blog/univ_mmds/mid_03)에서 찾는 법을 다룸)
+
+2. 규칙 생성
+
+이제 규칙을 생성하는 방식을 알아보자.
+
+우선 생성된 빈발 항목 집합 I의 부분집합을 이용해서 생성 가능한 모든 연관 규칙을 만든다.
+예로 들어 **I = \{a, b, c, d\}** 라면, **\{a, b, d\} &rarr; c, \{a, b\} &rarr; \{c, d\}** 등등과 같이 모든 조합에 대해 만들어 주는 것이다.
+
+그 다음은 생성된 모든 규칙에 대해 Confidence, Interest를 분석해서 의미있는 규칙만 남도록 걸러내면 된다.
+여기서 특정 규칙을 검사하고 나면 나머지 특정 규칙들은 검사할 필요가 없어지는 최적화가 가능한데, 그 이유를 알아보자.
+
+예로 들어 **\{a, b, c\} &rarr; d** 의 confidence가 threshold 이하라면 **\{a, b, c\}** 의 부분집합이 조건부가 되는 규칙들(**\{a, b\} &rarr; \{c, d\}**, **\{b\} &rarr; \{a, c, d\}**, ...)은 검사를 진행할 필요가 없어진다.
+왜냐하면 아래의 식을 잘 살펴보자.
+
+$$
+conf(I \rightarrow j) = \frac{support(I \cup j)}{support(I)}
+$$
+
+여기서 동일한 빈발 항목 집합에 대해 생성된 규칙이면 분자는 동일하다는 것은 자명하다.
+즉, 분모만 변화하게 되는데, 원소의 개수가 줄어들 수록 분모의 값은 필연적으로 같거나 커질 수 밖에 없다.
+그렇기에, confidence는 반드시 같거나 작아질 수 밖에 없는 것이다. (하물며 threshold와 비교하면? 분명 더 작을거다.)
+
+| Baskets | m(ilk), c(oke), p(epsi), b(read), j(am) |
+| --- | --- |
+| $B_1$ = **\{m, c, b\}** | $B_2$ = **\{m, p, j\}** |
+| $B_3$ = **\{m, c, b, n\}** | $B_4$ = **\{c, j\}** |
+| $B_5$ = **\{m, p, b\}** | $B_6$ = **\{m, c, b, j\}** |
+| $B_7$ = **\{c, b, j\}** | $B_8$ = **\{b, c\}** |
+
+마지막으로 실제로 연관 규칙을 찾아보며 마무리해보자.
+threshold = 3, confidence = 0.75 로 제한한다고 가정하자.
+
+> Frequent itemsets: 
+> **\{b, m\} \{b, c\} \{c, m\} \{c, j\} \{m, c, b\}**
+
+| Generate rules | | | |
+| --- | --- | --- | --- |
+| ~~b &rarr; m [c=0.67]~~ | b &rarr; c [c=0.83] | ... | ~~b,c &rarr; m [c=0.6]~~ |
+| m &rarr; b [c=0.8] | c &rarr; b [c=0.83] | | ~~b &rarr; c,m (검사 필요 없음)~~ |
+| | | | ~~c &rarr; b,m (검사 필요 없음)~~ |
+| | | | c,m &rarr; b [c=1] |
+| | | | b,m &rarr; c [c=0.75] |
+| | | | ~~m &rarr; b,c [c=0.6]~~ |
+이후에 interest도 진행
+
+### Compacting the output
+
+생성되는 연관 규칙이 너무 많기에 이를 압축하는 방식도 있다.
+
+1. Maximal frequent itemsets
+  threshold 기준으로 압축한다.
+2. Closed itemsets
+  support 기준으로 압축한다.
+
+다음 표를 보면서 이해해보자.
+(Yes인 경우에만 연관 규칙을 출력한다는 뜻이다)
+
+| Itemset | Support | Maximal | Closed |
+| --- | --- | --- | --- |
+| A | 4 | No | No |
+| B | 5 | No | Yes |
+| C | 3 | No | No |
+| AB | 4 | Yes | Yes |
+| AC | 2 | No | No |
+| BC | 3 | Yes | Yes |
+| ABC | 2 | No | Yes |
+**Threshold = 3**
+
+`Maximal 기준`
+- C를 보면 support가 threshold보다 크지만 출력하지 않는다.
+그 이유는 C의 superset BC가 `frequent 해서` 이미 출력하기 때문에 중복해서 출력하지 않는 것이다.
+- 반대로 AB를 보면 support가 threshold보다 커서 출력한다.
+그 이유는 AB의 superset ABC가 `frequent 하지 않기 때문`에 출력해야하기 때문이다.
+
+
+`Closed 기준`
+- C를 보면 support가 threshold보다 크지만 출력하지 않는다.
+그 이유는 C의 superset BC의 `support와 같기 때문`에 출력하지 않는 것이다.
+- 반대로 AB를 보면 support가 threshold보다 커서 출력한다.
+그 이유는 AB의 superset ABC의 `support가 보다 작기 때문`에 출력하는 것이다.
