@@ -80,3 +80,162 @@ Spark 스케쥴러는 스마트하게 동작하는데 그 특징은 다음과 �
   데이터를 캐싱하여 재사용성을 높이고, 속도도 빠르게 한다.
 3. key값 분포상태를 파악하여 불필요한 shuffle을 피한다.
   일례로 A &rarr; B로 넘어가며 키 값이 정렬되었으니, B &rarr; F로 넘어갈때는 불필요한 셔플을 하지 않음.
+
+---
+
+## methods (real-code)
+
+<notice>
+  Finding Similar Item까지 본 뒤에 코드를 보는 것이 더 좋습니다.
+</notice>
+
+### (Spark) DataFrame
+
+- `printSchema()`
+  해당 데이터프레임의 스키마를 보여줍니다.
+
+- `take(N)`
+  N개의 행을 보여줍니다.
+
+- `show(n=N, truncate=boolean)`
+  N개의 행을 표 형태로 정리하여 보여줍니다.
+  truncate=False시 ...으로 요약되지 않은 전체 문자열을 출력합니다.
+
+- `select(columnName[])`
+  columnName에 해당하는 column들만 남긴 spark dataframe 객체를 반환합니다.
+
+- `selectExpr(sqlSelect[])`
+  sql select문에서 사용할 수 있는 문법을 이용하여 해당 column을 가져온 뒤 dataframe 객체로 반환합니다.
+
+- `sort(columnName, ascending=boolean)`
+  columnName을 기준으로 오름차순 정렬합니다.
+  ascending=False시 내림차순으로 정렬합니다.
+
+- `join(dataframe, this.column == dataframe.column)`
+  본인(this) dataframe과 인자로 넣은(dataframe) dataframe의 공통 column을 기준으로 natural join을 수행 후 dataframe 객체를 반환합니다.
+  단, 일반 sql과 다르게 공통 column이 하나만 표시되는게 아닌 중복되서 표시됩니다.
+
+- `toPandas()`
+  데이터가 pandas로 옮길 수 있을 만큼 작다면, spark dataframe에서 pandas dataframe으로 변환합니다.
+
+- `groupBy(columnName[])`
+  배열에 들어있는 모든 columnName을 기준으로 그루핑한 후 GroupedData 객체를 반환합니다.
+
+- `rdd`
+  spark dataframe에서 RDD 인스턴스를 생성합니다.
+
+### (spark) GroupedData
+
+- `count()`
+  각 그룹의 행의 개수를 카운트하여 count column을 만들고 dataframe 객체를 반환합니다.
+
+- `agg(column)`
+  column에 대해 집계함수를 수행합니다.
+  아래와 같이 응용하여 사용하면 item을 직렬화할 수 있습니다.
+  alias를 이용해 column의 이름을 변경할 수 있습니다.
+
+  ```python:.py
+  df = orders_joined.groupBy('order_id').agg(collect_set('product_name').alias('items'))
+  df.show()
+  ```
+
+  | order_id | items |
+  |---|---|
+  | 1 | [Bag of Organic B... ] |
+  | 96 | [Roasted Turkey, ... ] |
+  | 112 | [Umcka Elderberry... ] |
+
+### RDD (PipelinedRDD)
+
+- `collect()`
+  RDD를 출력합니다.
+
+- `map(function(row))`
+  RDD에 대해 function를 적용합니다.
+  파라미터로 RDD의 row가 전달됩니다.
+
+  ```python:.py
+  all_locations = jun_29_operations.rdd.map(lambda row: (row.TakeoffLocation, 1))
+  all_locations.take(3) 
+  ```
+
+  적용 후 PipelinedRDD 객체를 반환합니다.
+
+  > [('TAKHLI', 1), ('DANANG', 1), ('CONSTELLATION', 1)]
+
+- `flatMap(function)`
+  map과 동일한 기능을 수행합니다.
+  단, 결과가 1차원 배열만을 반환합니다.
+
+  ```python:.py
+  RDDs1 = RDDs1.flatMap(lambda line: line.split(' '))
+  ```
+
+- `reduceByKey(function(number, number))`
+  PipelinedRDD에 대해 function을 적용합니다.
+  파라미터로 2개의 key-value pair에 대해 value가 전달됩니다.
+
+  ```python:.py
+  locations_counts_rdd = all_locations.reduceByKey(lambda a, b: a+b).sortBy(lambda r: -r[1])
+  locations_counts_rdd.take(3)
+  ```
+
+  적용 후 PipelinedRDD 객체를 반환합니다.
+
+  > [('CONSTELLATION', 87), ('TAKHLI', 56), ('KORAT', 55)]
+
+- `sortByKey(ascending=boolean)`
+  RDD key-value pair에 대해 key값을 기준으로 정렬합니다.
+
+- `filter(function)`
+  function이 true를 반환하는 값만 통과시켜 RDD객체를 반환합니다.
+
+### spark instance
+
+- `sql(queryString)`
+  sql문법을 queryString를 실행한 후 spark dataframe 객체를 반환합니다.
+
+- `createDataFrame(RDD)`
+  RDD를 spark dataframe 인스턴스로 변환합니다.
+  단, 인스턴스의 Row에 따라 Column의 이름이 결정됩니다.
+
+  예로 들어 reduceByKey 이후 바로 createDataFrame 생성시 Row의 이름이 작성되지 않아 Column명이 _1, _2와 같은 식으로 초기화됩니다.
+
+  따라서 아래의 코드로 이름을 지정하는 것이 시각화에 도움이 됩니다.
+
+  ```python:.py
+  locations_counts_with_schema = locations_counts_rdd.map(lambda r: Row(TakeoffLocation=r[0], MissionsCount=r[1]))
+  locations_counts = spark.createDataFrame(locations_counts_with_schema)
+  locations_counts.show()
+  ```
+
+- `sparkContext.textFile(path)`
+  path에 해당하는 파일을 읽은 뒤 RDD 인스턴스를 반환합니다.
+
+### FPGrowth
+
+- `FPGrowth(itemsCol=columnName, minSupport=number, minConfidence=number)`
+  dataframe의 columnName에 대해 연관규칙을 생성하는 FPGrowth 인스턴스를 생성합니다.
+  이 때 minSupport, minConfidence를 설정해야 합니다.
+
+- `fit(dataframe)`
+  생성된 FPGrowth 인스턴스에 대해 dataframe을 적용하여 FPGrowthModel을 만듭니다.
+
+- `freqItemsets, associationRules`
+  생성된 FPGrowthModel에 대해 `빈발 항목 집합`과 `연관 규칙`을 생성합니다.
+
+  ```python:.py
+  # grouping with order_id
+  df = orders_joined.groupBy('order_id').agg(collect_set('product_name').alias('items'))
+
+  # change to spark dataframe
+  df = spark.createDataFrame(df.toPandas(), ['id', 'items'])
+
+  # analysis using FP-Growth
+  from pyspark.ml.fpm import FPGrowth
+  fpGrowth = FPGrowth(itemsCol='items', minSupport=0.01, minConfidence=0.5)
+  model = fpGrowth.fit(df)
+
+  num_freqItemsets1 = model.freqItemsets.count()
+  num_associationRules1 = model.associationRules.count()
+  ```
