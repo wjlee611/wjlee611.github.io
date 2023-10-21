@@ -1,0 +1,131 @@
+---
+title: 'Facade Pattern'
+description: 'Facade 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Facade Pattern
+draft: false
+date: 2023-10-21 18:18:08
+---
+
+## 필요성
+
+집에서 나만의 영화관을 만든다고 가정해보자.
+편-안하게 영화를 보고싶지만, 영화 보기 전 선행되어야 할 일들이 많다.
+
+```java:HomeTheater.java
+public class HomeTheater {
+  public static void main(String[] args) {
+    ...
+    // 팝콘을 튀기고
+    popper.on(); 
+    popper.pop();
+    // 조명을 낮추고
+    lights.dim(10); 
+    // 스크린을 내리고
+    screen.down();
+    // 빔 프로젝터를 설정하고
+    projector.on();
+    projector.setInput(dvd);
+    projector.wideScreenMode();
+    // 앱프에 영화를 넣고
+    amp.on();
+    amp.setDvd(dvd);
+    amp.setSurroundSound();
+    amp.setVolume(5);
+    // 영화 실행...
+    dvd.on();
+    dvd.play(movie);
+  }
+}
+```
+
+이런 일련의 과정을 클라이언트에게 할당하면, 개발자 입장에선 피곤할 뿐만 아니라, 장치의 메서드에 변화가 생기면 클라이언트가 해당 부분을 수정해야 한다는 단점이 있다.
+
+## Facade Pattern
+
+Facade 디자인 패턴은 **단일화된 인터페이스로 서브 시스템을 다루는 패턴**으로, 위의 일련의 과정을 클라이언트에게 맡기는 것이 아닌, 하나의 인터페이스로 묶고, 그 인터페이스만 클라이언트에게 제공하는 것이다.
+
+```java:HomeTheaterFacade.java
+public class HomeTheaterFacade {
+  Amplifire amp;
+  DvdPlayer dvd;
+  Projector projector;
+  ...
+
+  public HomeTheaterFacade (Amplifire amp, ...) {
+    this.amp = amp;
+    ...  
+  }
+
+  public void watchMovie(String movie) {
+    // 팝콘을 튀기고
+    popper.on(); 
+    popper.pop();
+    // 조명을 낮추고
+    lights.dim(10); 
+    // 스크린을 내리고
+    screen.down();
+    // 빔 프로젝터를 설정하고
+    projector.on();
+    projector.setInput(dvd);
+    projector.wideScreenMode();
+    // 앱프에 영화를 넣고
+    amp.on();
+    amp.setDvd(dvd);
+    amp.setSurroundSound();
+    amp.setVolume(5);
+    // 영화 실행...
+    dvd.on();
+    dvd.play(movie);
+  }
+}
+```
+
+```java:HomeTheater.java
+public class HomeTheater {
+  public static void main(String[] args) {
+    ...
+
+    HomeTheaterFacade homeTheater = new HomeTheaterFacade(...);
+
+    homeTheater.watchMovie("movie");
+  }
+}
+```
+
+일련의 모든 과정을 Facade에게 일임하여 클라이언트는 Facade를 이용해 나름 매크로 기능을 이용할 수 있다.
+
+<tip>
+  눈여겨 봐야 할 디자인 원칙: **직접적인 친구와만 대화하라**
+  <br />
+  객체의 메서드는 다음과 같은 경우에만 호출하는 것이 바람직하다.
+  1. 객체 자신의 멤버 메서드를 호출
+  2. 인자로서 넘어온 객체의 메서드를 호출
+  3. 메서드 내부에서 생성된 객체의 메서드를 호출
+  4. 객체의 멤버변수로 저장된 객체의 메서드 호출
+
+  예를 들어보자.
+  아래와 같은 경우는 부적절한 경우이다.
+
+  ```java:.java
+  public float getTemp() {
+    Thermometer thermometer = station.getThermometer();
+    return thermometer.getTemperature();
+  }
+  ```
+
+  thermometer가 getTemp() **메서드 내부에서 생성되지 않았**는데, 해당 객체의 getTemperature() 메서드를 호출했기 때문이다.
+  <br />
+  대신에 아래와 같이 하는 것이 바람직하다.
+
+  ```java:.java
+  public float getTemp() {
+    return station.getTemperature();
+  }
+  ```
+
+  <br />
+  정리하면, 객체의 메서드를 호출할 때에는 객체간의 인과관계가 명확한 상황에서만 호출하라는 뜻이다.
+</tip>

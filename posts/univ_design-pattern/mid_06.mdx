@@ -1,24 +1,21 @@
 ---
-title: 'Adapter & Facade Pattern'
-description: 'Adapter 그리고 Facade 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+title: 'Adapter Pattern'
+description: 'Adapter 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
 icon: ''
 image: ''
 tags:
   - Adapter Pattern
-  - Facade Pattern
 draft: false
 date: 2023-10-11 17:13:25
 ---
 
-## Adapter Pattern
-
-### 필요성
+## 필요성
 
 개발하다 보면, 이전에 개발했던 코드가 있는데, 새로 개발된 코드 사양에 맞게 변경시켜야 하는 상황이 많을 것이다.
 마음같아선 새로 짜고 싶지만, dependency가 높은 코드나 배포가 진행된 코드의 경우 수정하는데 부담이 클 수 밖에 없다.
 이런 경우에 오래된 코드를 새로운 코드 사양에 맞게 변형시켜줘야 할 필요성이 생기는데, 이 때 `Adapter Pattern`을 사용하게 된다.
 
-### 예시
+## Adapter Pattern
 
 예를 들어보기 위해 우리의 오랜 친구(?) Duck 시뮬레이터를 다시 불러와보자.
 
@@ -78,7 +75,7 @@ public class DuckSimulator {
 }
 ```
 
-### IRL
+## IRL
 
 실제로 Adapter Pattern이 적용되는 사례를 살펴보자.
 
