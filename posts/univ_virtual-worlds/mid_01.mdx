@@ -1,0 +1,131 @@
+---
+title: 'Unity Engine'
+description: '유니티 게임 엔진에 대한 기초적인 이론을 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Unity
+  - Resource Management
+  - Game Loop
+  - Delta Time
+draft: false
+date: 2023-10-23 17:46:11
+---
+
+## Engine Architecture
+
+정말 말도안되게 깊고 넓은 레이어가 있는데, 간략하게 무슨 역할만을 하는지 살펴보자.
+~~(괜히 게임이 종합 예술이 아닌...)~~
+
+- Platform Independence Layer
+  디바이스에 상관없이 구동시키기 위한 레이어
+
+- Core systems
+  각종 코어 유틸리티들의 집합.
+  메모리 관리, 수학 라이브러리, 자체 자료구조 알고리즘 등.
+
+- Resource Manager
+  각종 에셋글의 생성과 관리, 배치 등의 총괄적인 관리를 담당.
+  **생성은 개발단계**에서, **배치는 런타임**에 관리된다.
+
+- Rendering Engine
+  에셋 등 데이터를 픽셀로 랜더링.
+  Projection, Shading, Texture sampling 등이 여기서 처리됨.
+
+- Scene Graph/Culling Optimization
+  시야에 안보이는 부분을 잘라내여 보이는 부분만 랜더링하도록 최적화.
+
+- Visual Effects
+  광원, 명암 등, 이미지(비주얼) 향상을 위한 후처리 과정.
+
+- Collision and Physics
+  충돌 및 물리 계산.
+
+- Animation
+  에셋들의 물리법칙을 에외한 움직임.
+
+- Human Interface Devices (HID)
+  사용자 입력, 움직임 등의 장치 관리.
+
+- Gameplay Foundation systems
+  게임 개발 환경 제공.
+
+---
+
+## Resource Management
+
+리소스에는 Meshes, audio, animation 등등 여러 raw resources 가 존재하는데, 각 리소스가 어떻게 처리되어야 하는지는 각 리소스의 Metadata를 참고하면 알 수 있다.
+
+리소스 생성과정은 다음과 같다.
+1. Maya, Photoshop 등과 같은 서드파티 앱에서 Export 한다.
+2. 이후 유니티가 game-ready 에셋인 `prefeb`으로 변환하기 위해 리소스 컴파일러가 구동된다.
+3. 추가로 여러 리소스를 하나의 패키지로 합치기 위해 링커도 제공한다.
+
+### Runtime
+
+유니티가 런타임에 어떻게 리소스를 관리하는지 개념적으로 알아보자.
+
+우선 유니티는 동일한 리소스는 특정 시각에 반드시 **1개**만 메모리에 올라오도록 보장한다.
+무슨 말이냐면 원할 때 리소스가 불러와지고, 이게 중복되어 불러와져 메모리 낭비를 하지 않게끔 해준다는 뜻인데, 이는 유니티의 **로딩 정책** 덕분에 가능해졌다.
+
+![231023-181333](/posts/mid_01/231023-181333.png)
+
+유니티는 리소스를 `비동기 로드`하기 때문에 로드해야 할 시점보다 미리 로딩한다.
+예로 들어 Level 1 에서는 A, B, C 리소스가 필요한데, 레벨 실행 전에 먼저 필요한 리소스의 목록을 파악해서 로딩하고, 로딩이 완료된 후에 레벨을 진행하는 방식으로 진행된다.
+
+이 때, 각 리소스별로 `Reference count`를 둬서 쓸데없는 중복 로딩이나, 필요 없는 리소스를 메모리에서 제거하기도 한다.
+ref count가 0보다 큰데 로딩되지 않은 리소스는 로딩하고, ref count가 0인데 로딩된 리소스는 언로드 하도록 하는 것이다.
+
+메모리에서 제거하는 원리는, GC(Garbage Collector)가 일정 주기로 ref count가 0인 리소스를 제거한다.
+`System.GC.Collect()` 를 이용하면 수동적으로 GC를 호출할 수 있지만, 가능하면 그러지 말자.
+
+### Location
+
+리소스가 어디에 존재하는지에 따라 런타임시 로드 방식이 달라진다.
+
+- AssetBundles
+  유니티 플레이어 외부의 리소스로, 보통 웹서버 상에 존재하는 리소스이다.
+  `AssetBundle.LoadAsset()` 으로 불러올 수 있다.
+
+- Resource folders
+  유니티 플레이어 내부의 리소스로, Project view의 Resources 폴더에 존재하는 리소스이다.
+  `Resources.Load()` 로 불러올 수 있다.
+
+---
+
+## Game Loop
+
+매 프레임 상태 변경을 하거나, 사용자 입력을 받거나, 화면 랜더링을 위한 무한 루프를 의미한다.
+1초에 얼마나 루프가 돌아가는지를 나타내는 척도가 FPS인데, 엄밀히 말하면 화면이 그려지는 횟수지만, 한 루프에 한 번 화면이 업데이트되니 거의 같이 사용할 수 있다.
+
+유니티에선 거의 대부분의 클래스가 `MonoBehavior`를 상속하여 정의하는데, 여기에서 `Update()` 함수가 프레임당 한 번 호출이 이루어진다.
+
+그 외에도 override할 수 있는 다른 함수 몇 개 더 알아보자.
+
+- `Start()`
+  첫 프레임 업데이트시 호출되는 함수.
+
+- `LateUpdate()`
+  Update() 함수가 종료되고나서 호출되는 함수.
+
+- `OnDestory()`
+  소멸자 비스무리한 함수.
+  마지막 프레임의 업데이트가 완료되고 나서 호출되는 함수.
+
+### Delta Time
+
+두 인접한 프레임 사이의 시간이 얼마나 흘렀는가를 나타내는 값으로, 보통 그 값은 FPS의 역수이다.
+즉, 30FPS 게임에서의 $\Delta t$는 1/30 seconds, 즉, 3.33ms이다.
+
+두 프레임 사이의 시간이므로 물리 시뮬레이션시 시간 변화율로서 동작하게 되는데, 물리량을 수식화 하면 다음과 같다.
+
+| 의미 | 수식 |
+|---|---|
+| Position | $p_{t+\Delta t} = p_t + v_t \cdot \Delta t$ |
+| Velocity | $v_{t+\Delta t} = v_t + a_t \cdot \Delta t$ |
+| Acceleration | $a_{t+\Delta t} = f_{ext}/m$ |
+
+즉, $\Delta t$가 너무 크거나 일정하지 않으면 물리량에 오차가 커질 수 밖에 없다.
+만약 델타값을 고정시키고, 이를 게임 루프에 의존해서 증가시킨다면 컴퓨터 사양에 따라 다르게 동작하는 현상이 발생할 수 있다.
+
+따라서, 유니티는 **CPU**의 `high-resolution timer`를 이용해서 델타값을 구하기 때문에 현실세계와 유사한 플레이 경험을 얻을 수 있도록 합니다.
