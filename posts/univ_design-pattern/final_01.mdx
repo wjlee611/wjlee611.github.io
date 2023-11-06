@@ -1,0 +1,129 @@
+---
+title: 'Composite Pattern'
+description: 'Composite 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Composite Pattern
+draft: false
+date: 2023-11-06 12:26:23
+---
+
+## 필요성
+
+트리구조와 같은 데이터에 순차 접근해야 하는 상황을 가정해보자.
+Iterator pattern으로 구현된 자료구조에 접근할 때의 문제점은, Iterator로 반환되는 객체의 타입이 동일해야 한다는 것이다.
+무슨 말이냐면, i번째 접근하는 자료형과 k번째 접근하는 자료형(인터페이스)이 동일해야 한다는 것이다.
+
+이 때 만약, leaf node와 inner node가 다른 방식으로 동작한다고 해서 다른 자료형으로 구현한다면?
+노드 타입을 검사하고, 타입에 맞는 순차탐색 과정을 거치는 등 순차탐색하는 과정이 매우 복잡해질 것이다.
+
+## Composite Pattern
+
+이런 순차탐색에서의 불편함을 없애고자, leaf, inner node **모두 동일한 `component class`를 구현**하는 방식을 Composite Pattern 이라고 한다.
+예시 코드를 살펴보자.
+
+```java:MenuComponent.java
+public abstract class MenuComponent {
+  // For inner node
+  public void add(MenuComponent c) {
+    throw new UnsupportedOperationException();
+  }
+  public void remove(MenuComponent c) {
+    throw new UnsupportedOperationException();
+  }
+  public MenuComponent getChild(int i) {
+    throw new UnsupportedOperationException();
+  }
+  // For all node
+  public void print() {
+    throw new UnsupportedOperationException();
+  }
+  public String getName() {
+    throw new UnsupportedOperationException();
+  }
+  ...
+}
+```
+
+이제 leaf, inner node에서 위 클래스를 extends 하여 구현하면 모두 동일한 인터페이스(메서드)를 갖게되어 Iterator를 이용한 순차탐색이 가능해진다.
+(Iterator\<MenuComponent\> 이런 느낌)
+
+```java:MenuItem.java
+// leaf node
+public class MenuItem extends MenuComponent {
+  String name;
+  ...
+  public MenuItem(String name, ...) {
+    this.name = name;
+    ...
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void print() {
+    System.out.println(getName());
+  }
+  ...
+}
+```
+
+이런식으로 필요한 메서드만 override 해서 사용하면 된다.
+만약, override하지 않은 메서드를 호출한다면 UnsupportedOperationException이 발생하는 것이다.
+
+```java:Menu.java
+public class Menu extends MenuComponent {
+  ArrayList menuComponents = new ArrayList();
+  String name;
+  ...
+  public Menu(String name, ...) {
+    this.name = name;
+    ...
+  }
+
+  public void add(MenuComponent c) {
+    menuComponents.add(c);
+  }
+  public void remove(MenuComponent c) {
+    menuComponents.remove(c);
+  }
+  public void getChild(int i) {
+    return (MenuComponent)menuComponents.get(i);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void print() {
+    System.out.println(getName());
+    System.out.println("===========");
+
+    Iterator iter = menuComponents.iterator();
+    while(iter.hasNext()) {
+      MenuComponent menuComp = (MenuComponent)iter.next();
+      menuComp.print();
+    }
+  }
+  ...
+}
+```
+
+이런식으로 MenuItem(leaf), Menu(inner) 모두 동일한 print 라는 메서드를 호출할 수 있지만,
+구현을 다르게 했기 때문에 동작이 달라진다.
+
+이제 메뉴를 출력하든, 메뉴의 각 음식을 출력하든, 나아가 모든 메뉴를 출력(`클라이언트`가 하는 일)하든 상관없이
+MenuComponent 클래스를 상속하여 만든 객체는 print를 호출하여 출력할 수 있다.
+
+### vs. Decorator
+
+Menu 클래스를 보면 뭔가 느낌이 Decorator Pattern을 보는 것과 비슷한 느낌을 받을 수 있다.
+자식 클래스에서 부모 클래스를 멤버 변수로 가지며, override 한다는 점에서 비슷하다.
+
+하지만, 사용 목적에 차이점이 있음을 알고가면 좋을 거 같다.
+
+`Decorator Pattern`은 leaf node에 해당하는 부분의 **변화를 가하지 않고 추가 기능 구현**을 위해 override 한다는 데 목적이 있다면,
+
+`Composite Pattern`은 계층 구조의 모든 노드가 **같은 인터페이스로 클라이언트에서 접근**할 수 있도록 하는데에 목적이 있다.

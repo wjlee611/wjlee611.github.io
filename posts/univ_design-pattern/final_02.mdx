@@ -1,0 +1,132 @@
+---
+title: 'State Pattern'
+description: 'State 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - State Pattern
+draft: false
+date: 2023-11-06 14:46:25
+---
+
+## 필요성
+
+우리가 Gumball machine을 개발한다고 가정해보자.
+Gumball machine은 다음과 같은 동작을 수행해야 할 것이다.
+
+![231106-144938](/posts/final_02/231106-144938.png)
+
+개발 경험이 많이 없다면, 해당 동작을 함수 기반으로 작성할 것이다.
+
+```java:GumballMachine.java {9, 12-14}
+public class GumballMachine {
+  final static int SOLD_OUT = 0;
+  final static int NO_QUARTER = 1;
+  final static int HAS_QUARTER = 2;
+  final static int SOLD = 3;
+
+  private int state = SOLD_OUT;
+
+  public void insertQuarter() {
+    if (state == SOLD_OUT) {
+      // 껌이 비었기에 동전을 넣게 못하도록 처리
+    } else if (state == NO_QUARTER) {
+      // 동전을 받았기에 state를 변경
+      state = HAS_QUARTER;
+    } else if
+    ...
+  }
+}
+```
+
+이런식으로 작성한다면 미래의 발견할 문제점이 많다는 것은 둘째치고, 그냥 뭔가 딱 보기에도 불-편하지 않은가?
+실제로 다음과 같은 문제점도 발생할 가능성이 높다.
+
+- 상태가 많을수록 조건문이 많아짐
+- 상태 상수를 변경하거나, 추가, 삭제시 모든 함수에 대한 수정이 필요함
+
+한 마디로, `유지보수`하기에 너무나도 좋지 못한 방법이다.
+
+## State Pattern
+
+앞의 방식은 상태의 변화, **Transition을 중심**으로 한 코드 작성 방식이었다.
+
+하지만, 상태별로 취해야 할 행동을 다르게 정의하고, 그렇게 정의된 상태를 갖도록 하는 디자인 패턴을 `State Pattern` 라고 하는데,
+말로 하면 이해가 어려우니 이번엔 상태, **State를 중심**으로한 코드 작성 방식을 살펴보자.
+
+```java:State.java
+public interface State {
+  insertQuarter();
+  ejectQuarter();
+  turnCrank();
+  dispense();
+}
+```
+
+우선 각 상태에서 수행해야 할 함수를 모아 State 인터페이스를 만들어주고, 각 상태는 State 인터페이스를 구현하는 방식으로 구현한다.
+
+```java:NoQuarterState.java {8-11}
+public class NoQuarterState implements State {
+  GumballMachine machine;
+
+  public NoQuarterState(GumballMachine machine) {
+    this.machine = machine;
+  }
+
+  public void insertQuarter() {
+    // 동전을 받았기에 state를 변경
+    machine.setState(machine.getHasQuarterState());
+  }
+  ...
+}
+```
+
+이런식으로 상태에 따라 수행 가능한 기능을 구현하는 것이다.
+
+```diff-java:GumballMachine.java
+  public class GumballMachine {
+-   final static int SOLD_OUT = 0;
+-   final static int NO_QUARTER = 1;
+-   final static int HAS_QUARTER = 2;
+-   final static int SOLD = 3;
+    // getter 구현
++   State soldOutState;
++   State noQuarterState;
++   State hasQuarterState;
++   State soldState;
+
+-   private int state = SOLD_OUT;
++   private State state = soldOutState;
+    int count = 0;
+
+    public GumballMachine(int gums) {
+      this.count = gums;
+      soldOutState = new SoldOutState(this);
+      noQuarterState = new NoQuarterState(this);
+      ...
+      if (gums > 0) {
+        state = noQuarterState;
+      }
+    }
+
+    public void setState(State state) {
+      this.state = state;
+    }
+
+    public void insertQuarter() {
+-     if (state == SOLD_OUT) {
+-       // 껌이 비었기에 동전을 넣게 못하도록 처리
+-     } else if (state == NO_QUARTER) {
+-       // 동전을 받았기에 state를 변경
+-       state = HAS_QUARTER;
+-     } else if
+-     ...
++     state.insertQuarter();
+    }
+  }
+```
+
+이제 GumballMachine은 상태를 상수로 관리하는 것이 아닌, 클래스로 관리하게 되고, 현재 상태에 따라 호출되는 함수의 기능이 달라지게 된다.
+
+이렇게 구현하면 유지보수도 간편해지는게, 상태를 변경한다고 하면, 해당 상태의 클래스만 수정하면 되고,
+상태를 추가한다고 하면 상태 클래스를 추가하고 GumballMachine의 상단에 상태를 보관할 수 있게만 추가하면 된다.
