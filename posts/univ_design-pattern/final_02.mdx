@@ -56,10 +56,10 @@ public class GumballMachine {
 
 ```java:State.java
 public interface State {
-  insertQuarter();
-  ejectQuarter();
-  turnCrank();
-  dispense();
+  public void insertQuarter();
+  public void ejectQuarter();
+  public void turnCrank();
+  public void dispense();
 }
 ```
 
