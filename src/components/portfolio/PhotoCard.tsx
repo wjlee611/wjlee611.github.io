@@ -15,10 +15,13 @@ export default function PhotoCard({
   className,
 }: IPhotoCard) {
   return (
-    <div className={clsWrapper("bg-white p-3", className ?? "")}>
+    <div
+      className={clsWrapper("bg-white p-3", className ?? "")}
+      style={{ height: (size * 4) / 3 + 16 }}
+    >
       <Image
         width={size}
-        height={(size * 16) / 9}
+        style={{ aspectRatio: "3/4" }}
         src={image}
         alt={image.src}
       />

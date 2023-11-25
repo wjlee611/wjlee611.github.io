@@ -14,7 +14,8 @@ export default function PortfolioTitle() {
       />
       <div className="flex flex-col">
         <span className="flex flex-col text-white">
-          <span className="text-lg">방문자님 안녕하세요!</span>
+          <span className="text-lg font-bold">방문자님 안녕하세요!</span>
+
           <span className="flex items-end space-x-2 mb-5">
             <span className="flex items-end bg-black p-1 rounded-md bg-opacity-40">
               <span className="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text font-bold text-transparent text-2xl">
@@ -41,6 +42,7 @@ export default function PortfolioTitle() {
             </span>
             <span>{" 라는 서비스를 운영 중입니다."}</span>
           </span>
+
           <span className="mt-5">
             <span>{"저는 "}</span>
             <span className="bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text font-bold text-transparent">
@@ -56,8 +58,26 @@ export default function PortfolioTitle() {
             </span>
             <span>{"를 비롯한 여러 활동 경험이 있습니다."}</span>
           </span>
+
+          <span className="mt-10 text-lg font-bold">걱정을 즐기는 개발자</span>
+          <span className="mt-2">저는 잔 걱정이 많은 편입니다.</span>
+          <span className="text-gray-400 italic flex flex-col">
+            <span>
+              {"'이대로 사회에 나가도 괜찮은걸까..?'  -- 전역 7일 전"}
+            </span>
+            <span>
+              {
+                "'다른 사람이 사용할 때도 성능이 잘 나오려나..?'  -- Arkhive 출시 1달 전"
+              }
+            </span>
+          </span>
+          <span className="mt-5">
+            하지만 이런 걱정을 할 때마다 항상 이를 극복할 수 있는 방향으로
+            행동해왔고, 그 결과 점점 성장하는 제 자신을 볼 수 있었습니다.
+          </span>
         </span>
-        <ul className="flex mt-5">
+        <span className="mt-10 text-lg font-bold">Links</span>
+        <ul className="flex mt-2">
           <li className="text-6xl text-white">
             <a href="https://github.com/wjlee611" target="_blank">
               {AiFillGithub()}

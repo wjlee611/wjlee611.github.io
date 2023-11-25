@@ -17,6 +17,7 @@ interface IWaterfallLayout {
   icon?: string;
   from: Color;
   to: Color;
+  fixed?: boolean;
 }
 
 export default function WaterfallLayout({
@@ -25,6 +26,7 @@ export default function WaterfallLayout({
   icon = "🫧",
   from,
   to,
+  fixed = false,
 }: IWaterfallLayout) {
   const targetRef = useRef<HTMLDivElement>(null);
   const isIntersect = useObserver({
@@ -77,31 +79,34 @@ export default function WaterfallLayout({
 
   return (
     <div className="flex flex-col w-full mb-3 relative" ref={targetRef}>
+      {fixed ? (
+        <div className="absolute w-full h-[calc(100%_-_5rem)] mt-16 bg-black bg-opacity-20 blur-md rounded-3xl"></div>
+      ) : null}
       {title ? (
-        <div className="sticky top-20 z-10">
-          <div className="flex relative items-center transition-opacity">
+        <div className={clsWrapper("top-20 z-10", fixed ? "" : "sticky")}>
+          <div className="flex relative items-center transition-opacity backdrop-blur">
             <motion.div
               className={clsWrapper(
                 "w-8 aspect-square rounded-full flex justify-center items-center blur-md absolute top-1 left-0",
                 colorPicker(from)
               )}
               variants={zoomIn}
-              initial={false}
-              animate={isIntersect ? "view" : "notView"}
+              initial={fixed ? "view" : false}
+              animate={fixed || isIntersect ? "view" : "notView"}
             />
             <motion.span
               className="w-8 aspect-square flex items-center justify-center text-2xl"
               variants={zoomIn}
-              initial={false}
-              animate={isIntersect ? "view" : "notView"}
+              initial={fixed ? "view" : false}
+              animate={fixed || isIntersect ? "view" : "notView"}
             >
               {icon}
             </motion.span>
             <motion.h2
-              className="flex flex-1 items-start ml-3 p-2 rounded-lg text-white blur-none font-bold backdrop-blur text-lg md:text-xl"
+              className="flex flex-1 items-start ml-3 p-2 rounded-lg text-white blur-none font-bold text-lg md:text-xl"
               variants={slideToRight1}
-              initial={false}
-              animate={isIntersect ? "view" : "notView"}
+              initial={fixed ? "view" : false}
+              animate={fixed || isIntersect ? "view" : "notView"}
             >
               {title}
             </motion.h2>
@@ -109,23 +114,25 @@ export default function WaterfallLayout({
         </div>
       ) : null}
       <div className="w-full flex mt-2">
-        <div className="w-8 h-auto flex items-start justify-center">
-          <motion.div
-            className={clsWrapper(
-              "w-1 rounded-full bg-gradient-to-b bg-grad from-[calc(100%-50px)]",
-              colorFromPicker(from),
-              colorToPicker(to)
-            )}
-            variants={expandToBottom}
-            initial={false}
-            animate={isIntersect ? "view" : "notView"}
-          />
-        </div>
+        {fixed ? null : (
+          <div className="w-8 h-auto flex items-start justify-center">
+            <motion.div
+              className={clsWrapper(
+                "w-1 rounded-full bg-gradient-to-b bg-grad from-[calc(100%-50px)]",
+                colorFromPicker(from),
+                colorToPicker(to)
+              )}
+              variants={expandToBottom}
+              initial={fixed ? "view" : false}
+              animate={fixed || isIntersect ? "view" : "notView"}
+            />
+          </div>
+        )}
         <motion.div
-          className="py-10 ml-6 flex flex-1"
+          className={clsWrapper("py-10 flex flex-1", fixed ? "" : "ml-6")}
           variants={slideToRight2}
-          initial={false}
-          animate={isIntersect ? "view" : "notView"}
+          initial={fixed ? "view" : false}
+          animate={fixed || isIntersect ? "view" : "notView"}
         >
           {children}
         </motion.div>
