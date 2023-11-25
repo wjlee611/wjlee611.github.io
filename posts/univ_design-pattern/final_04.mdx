@@ -132,6 +132,8 @@ public class NYPizzaStore extends PizzaStore {
 
 참고로 모든 blahPizza는 Pizza 클래스를 상속받는 식으로 구현해야 하고, Pizza 클래스는 abstract로 만들어서 인스턴스로 만들 수 없게 해야한다.
 
+![231125-111929](/posts/final_04/231125-111929.png)
+
 정리하자면, Factory pattern은 객체를 생성하는 인터페이스(createPizza)를 정의할 때
 어떤 클래스(blahPizza)를 만들어야 하는지는 상위 클래스(PizzaStore)가 결정하는 것이 아닌,
 하위 클래스(NYPizzaStore)에게 일임하는 방식의 디자인 패턴을 의미한다.
@@ -253,6 +255,8 @@ public class NYPizzaStore extends PizzaStore {
 
 마지막으로 각 지역에 피자 매장에 그 지역에 맞는 재료 factory를 종속시켜 주면,
 같은 종류의 피자를 만든다고 할지라도, 재료가 다르게 들어가기 떄문에 지역 특색에 맞는 피자가 만들어 질 것이다.
+
+![231125-111610](/posts/final_04/231125-111610.png)
 
 이렇게 구현 클래스(PizzaFactory)를 반환하는 것이 아닌, 클래스 생성 후 인터페이스(NYPizzaIngredientFactory)를 반환하는 디자인 패턴을 Abstract Factory Pattern 라고 한다.
 간단하게 말하면 factory(NYPizzaStore)의 factory(NYPizzaIngredientFactory) 인 것이다.
