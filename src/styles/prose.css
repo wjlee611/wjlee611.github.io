@@ -163,3 +163,6 @@
 .prose div.math-display::-webkit-scrollbar-thumb {
   @apply bg-gradient-to-tr from-blue-500 to-blue-300 rounded-full;
 }
+.katex .base span {
+  @apply text-center;
+}
