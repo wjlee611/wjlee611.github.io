@@ -1,0 +1,258 @@
+---
+title: 'Factory Pattern'
+description: 'Factory 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Factory Pattern
+  - Abstract Factory Pattern
+draft: false
+date: 2023-11-19 21:52:25
+---
+
+## 필요성
+
+이번엔 피자가게로 예시를 들어보자.
+피자 가게에서 피자의 주문을 처리하기 위해서는 아래와 같은 형식으로 코드를 작성해야 할 것이다.
+
+```java:PizzaStore.java
+public class PizzaStore {
+  ...
+  Pizza orderPizza(String tpye) {
+    Pizza pizza;
+
+    if (type.equals("cheese")) {
+      pizza = new CheesePizza();
+    } else if (type.equals("greek")) {
+      pizza = new GreekPizza();
+    }
+
+    pizza.prepare();
+    pizza.bake();
+    pizza.cut();
+    pizza.box();
+    return pizza;
+  }
+}
+```
+
+느낌만 보면 피자의 종류가 추가되거나 변경될 경우 orderPizza 메서드의 수정이 이루어져야 한다.
+예시가 적절하지 않은 느낌이 없지않아 있지만, orderPizza의 직접적인 수정이 부담스러울 수 있다.
+그 이유는 객체의 생성과 반복되는 메서드 호출 부분이 같은 함수 내에 위치하고 있기 때문이다.
+
+따라서 피자의 생성부(constructor)를 별도의 factory로 관리하는 기법에 대해 알아보자.
+
+## Factory Pattern
+
+이제 객체의 생성부를 factory로 캡슐화를 해보자.
+
+```java:PizzaFactory.java
+public class PizzaFactory {
+  public Pizza createPizza(String type) {
+    Pizza pizza;
+
+    if (type.equals("cheese")) {
+      pizza = new CheesePizza();
+    } else if (type.equals("greek")) {
+      pizza = new GreekPizza();
+    }
+
+    return pizza;
+  }
+}
+```
+
+이제 이를 위의 피자가게에 적용한다면 코드는 다음과 같이 수정된다.
+
+```diff-java:PizzaStore.java
+  public class PizzaStore {
++   PizzaFactory factory;
+
+    public PizzaStore(Pizzafactory factory) {
++     this.factory = factory;
+    }
+
+    public Pizza orderPizza(String type) {
+      Pizza pizza;
+
++     pizza = factory.createPizza(type);
+-     if (type.equals("cheese")) {
+-       pizza = new CheesePizza();
+-     } else if (type.equals("greek")) {
+-       pizza = new GreekPizza();
+-     }
+
+      pizza.prepare();
+      pizza.bake();
+      pizza.cut();
+      pizza.box();
+      return pizza;
+    }
+  }
+```
+
+이제 코드가 객체의 생성부와 반복되는 메서드의 호출 부분이 분리가 되었다.
+따라서 피자의 종류를 추가하거나 변경할 때에는 PizzaStore의 코드를 수정해야할 필요가 없어졌다.
+
+이렇게 하면 또 장점이 PizzaFactory를 교체하는 것 만으로도 생성할 수 있는 객체의 종류를 런타임에 다르게 결정할 수도 있다.
+
+factory 패턴을 이렇게 외부 클래스로 구현할 수도 있지만, 내부의 메서드 형식으로도 구현할 수 있다.
+아래 코드를 살펴보자.
+
+```java:PizzaStore.java {11}
+public abstract class PizzaStore {
+  public Pizza orderPizza(String type) {
+    Pizza pizza;
+
+    pizza = createPizza(type);
+
+    ...
+    return pizza;
+  }
+
+  abstract Pizza createPizza(String type);
+}
+```
+
+위에서는 PizzaFactory를 교체하는 방식으로 생성하는 객체를 다르게 할 수 있었다.
+이제는 이 abstract class를 구현하는 방식으로 생성하는 객체를 다르게 할 수 있다.
+
+```java:NYPizzaStore.java
+public class NYPizzaStore extends PizzaStore {
+  Pizza createPizza(String type) {
+    if (type.equals("cheese")) {
+      return new NYStyleCheesePizza();
+    } else if (type.equals("greek")) {
+      new NYStyleGreekPizza();
+    }
+    return null;
+  }
+}
+```
+
+참고로 모든 blahPizza는 Pizza 클래스를 상속받는 식으로 구현해야 하고, Pizza 클래스는 abstract로 만들어서 인스턴스로 만들 수 없게 해야한다.
+
+정리하자면, Factory pattern은 객체를 생성하는 인터페이스(createPizza)를 정의할 때
+어떤 클래스(blahPizza)를 만들어야 하는지는 상위 클래스(PizzaStore)가 결정하는 것이 아닌,
+하위 클래스(NYPizzaStore)에게 일임하는 방식의 디자인 패턴을 의미한다.
+
+<tip>
+  참고로 위의 코드는 종속 역전 원칙을 준수한 코드인데, 이게 뭐냐하면
+  가능하면 추상 클래스에 대해 종속성을 갖고, 구현 클래스에 대해서는 종속성을 피해야 한다는 디자인 원칙이다.
+  <br />
+  즉, PizzaStore에서는 객체를 CheesePizza, GreekPizza 로 관리하는 것이 아닌, 오직 Pizza 인터페이스로만 관리하는 것이 좋다.
+</tip>
+
+---
+
+## Abstract Factory Pattern
+
+그렇다면 NYPizza와 ChicagoPizza 모두 같은 종류의 피자를 판매한다면?
+사실살 들어가는 재료가 다를 뿐, 모두 CheesePizza, PepperoniPizza 등 같은 종류의 파지를 판매할 뿐인데,
+각각 다른 종류의 피자 클래스로 구현해야 한다는 문제점이 생길 것이다.
+
+생각해보면, 각 피자는 제조 방식은 같지만, 들어가는 재료가 다를 뿐이다.
+따라서 재료의 생성도 factory pattern으로 만든다면?
+
+```java:PizzaIngredientFactory.java
+public interface PizzaIngredientFactory {
+  public Dough createDough();
+  public Sauce createSauce();
+  public Cheese createCheese();
+  public Veggies[] createVeggies();
+  public Pepperoni createPepperoni();
+  public Clame createClame();
+}
+```
+
+우선 각 지역의 피자에 들어갈 재료를 factory pattern으로 만들기에 앞서,
+하나의 인터페이스로 묶어주기 위해 인터페이스 클래스를 만들어준다.
+
+```java:NYPizzaIngredientFactory.java
+public class NYPizzaIngredientFactory implements PizzaIngredientFactory {
+  public Dough createDough() {
+    return new ThinCrustDough();
+  }
+
+  public Sauce createSauce() {
+    return new MarinaraSauce();
+  }
+  ...
+}
+```
+
+이후에 각 지역에 맞는 재료 클래스를 반환하는 클래스를 구현해준다.
+따라서 각 지역에 피자 매장에 그 지역에 맞는 재료 factory를 종속시켜 준다면,
+같은 종류의 피자를 만든다고 할지라도, 재료가 다르게 들어가기 떄문에 지역 특색에 맞는 피자가 만들어 질 것이다.
+
+```java:Pizza.java
+public abstract class Pizza { 
+    String name;
+    Dough dough;
+    Sauce sauce;
+    Veggies veggies[]; 
+    Cheese cheese; 
+    Pepperoni pepperoni; 
+    Clams clam;
+
+    abstract void prepare(); 
+
+    void bake() {
+        System.out.println(“Bake for 25 minutes at 350”); 
+    }
+    ...
+}
+```
+
+```java:CheesePizza.java
+public class CheesePizza extends Pizza { 
+    PizzaIngredientFactory ingredientFactory;
+
+    public CheesePizza(PizzaIngredientFactory ingredientFactory) { 
+        this.ingredientFactory = ingredientFactory;
+    }
+
+    void prepare() {
+        System.out.println(“Preparing “ + name); 
+        dough = ingredientFactory.createDough(); 
+        sauce = ingredientFactory.createSauce(); 
+        cheese = ingredientFactory.createCheese(); 
+    }
+}
+```
+
+그렇기에 피자를 만들 때는 각 재료를 factory로 부터 가져오도록 구현해야 한다.
+
+```java:NYPizzaStore.java
+public class NYPizzaStore extends PizzaStore { 
+    ...
+    protected Pizza createPizza(String item) {
+        Pizza pizza = null;
+
+        PizzaIngredientFactory ingredientFactory = 
+            new NYPizzaIngredientFactory();
+
+        if (item.equals(“cheese”)) {
+            pizza = new CheesePizza(ingredientFactory); 
+            pizza.setName(“New York Style Cheese Pizza”);
+        } else if (item.equals(“veggie”)) {
+            pizza = new VeggiePizza(ingredientFactory); 
+            pizza.setName(“New York Style Veggie Pizza”);
+        } else if (item.equals(“clam”)) {
+            pizza = new ClamPizza(ingredientFactory); 
+            pizza.setName(“New York Style Clam Pizza”);
+        } else if (item.equals(“pepperoni”)) {
+            pizza = new PepperoniPizza(ingredientFactory); 
+            pizza.setName(“New York Style Pepperoni Pizza”);
+        } 
+
+        return pizza; 
+    }
+}
+```
+
+마지막으로 각 지역에 피자 매장에 그 지역에 맞는 재료 factory를 종속시켜 주면,
+같은 종류의 피자를 만든다고 할지라도, 재료가 다르게 들어가기 떄문에 지역 특색에 맞는 피자가 만들어 질 것이다.
+
+이렇게 구현 클래스(PizzaFactory)를 반환하는 것이 아닌, 클래스 생성 후 인터페이스(NYPizzaIngredientFactory)를 반환하는 디자인 패턴을 Abstract Factory Pattern 라고 한다.
+간단하게 말하면 factory(NYPizzaStore)의 factory(NYPizzaIngredientFactory) 인 것이다.
