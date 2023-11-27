@@ -7,7 +7,7 @@ export default function PortfolioTitle() {
   return (
     <div className="flex md:flex-row flex-col items-start">
       <PhotoCard
-        className="ml-6 rotate-12 md:mr-14 mb-12 md:mb-0"
+        className="ml-6 rotate-12 md:mr-14 mb-12 md:mb-0 mt-5"
         image={profileImg}
         text="2023.09.12"
         size={200}

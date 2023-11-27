@@ -118,7 +118,7 @@ export default function WaterfallLayout({
           <div className="w-8 h-auto flex items-start justify-center">
             <motion.div
               className={clsWrapper(
-                "w-1 rounded-full bg-gradient-to-b bg-grad from-[calc(100%-50px)]",
+                "w-[2px] rounded-full bg-gradient-to-b bg-grad from-[calc(100%-50px)]",
                 colorFromPicker(from),
                 colorToPicker(to)
               )}
@@ -129,7 +129,7 @@ export default function WaterfallLayout({
           </div>
         )}
         <motion.div
-          className={clsWrapper("py-10 flex flex-1", fixed ? "" : "ml-6")}
+          className={clsWrapper("py-10 flex flex-1", fixed ? "p-10" : "ml-6")}
           variants={slideToRight2}
           initial={fixed ? "view" : false}
           animate={fixed || isIntersect ? "view" : "notView"}

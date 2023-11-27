@@ -100,7 +100,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
         className={clsWrapper(
           nanumGothic.className,
           "text-center transition-all",
-          onTransition ? "w-screen h-screen " : ""
+          onTransition ? "w-screen h-screen overflow-x-hidden" : ""
         )}
       >
         <Head>
