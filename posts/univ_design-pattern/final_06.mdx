@@ -1,0 +1,108 @@
+---
+title: 'Builder Pattern'
+description: 'Builder 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Builder Pattern
+draft: false
+date: 2023-12-07 17:57:11
+---
+
+## 필요성
+
+인스턴스를 생성함에 있어, 주입해야할 인자의 개수가 너무 많을 경우 그 순서를 외우는 것은 쉽지 않다.
+또한, 클래스가 has-a관계로 depth가 깊은 경우에도 이를 인스턴스로 초기화 하는과정은 매우 복잡할 것이다.
+
+예를 들어 회원정보를 받는 클래스를 만들어보자.
+
+```java:Form.java
+public class Form {
+  private String firstName;
+  private String lastName;
+  private String userName;
+  private String email;
+  private String password;
+  private String address;
+  private Date dayOfBirth;
+  // etc...
+
+  public Form(String firstName, String lastName, ...) {
+    //...
+  }
+}
+```
+
+하지만, 위에처럼 인스턴스의 생성을 복잡하게 하지 않도록 하는 방법이 있다.
+인스턴스의 생성(초기화)를 유연하고, 보기 편하게 하기 위해 Builder Pattern을 사용한다.
+
+## Builder Pattern
+
+```diff-java:Form.java {18, 28-36, 40-42}
+  public class Form {
+    private String firstName;
+    private String lastName;
+    private String userName;
+    private String email;
+    private String password;
+    private String address;
+    private Date dayOfBirth;
+    // etc...
+
++   private Form(FormBuilder builder) {
+-   public Form(String firstName, String lastName, ...) {
+      this.firstName = builder.firstName;
+      this.lastName = builder.lastName;
+      //...
+    }
+
+    public static class FormBuilder {
+      private String firstName;
+      private String lastName;
+      // etc...
+
+      public FormBuilder(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+      }
+
+      public FormBuilder userName(String userName) {
+        this.userName = userName;
+        return this;
+      }
+
+      public FormBuilder email(String email) {
+        this.email = email;
+        return this;
+      }
+
+      // etc...
+
+      public Form build() {
+        return new Form(this);
+      }
+    }
+  }
+```
+
+builder 클래스를 외부에도 만들 수 있지만, 여기선 이렇게도 할 수 있다는 것을 보여주기 위해 클래스 내부에 넣었다.
+
+특이한 점은 Form 클래스의 생성자가 private 라는 점이다.
+즉, 일반적인 방법으로 Form 클래스를 인스턴스화 할 수 없다.
+반드시 FormBuilder 클래스를 이용해서 인스턴스화 해야한다.
+
+```java:LoginForm.java
+public class LoginForm {
+  public static void main(String[] args) {
+    FormBuilder builder = new Form.FormBuilder("Woong", "dev");
+    builder = builder.email("wjlee611@gmail.com").password("asdasd").userName("dev.Woong");
+    Form myForm = builder.build();
+  }
+}
+```
+
+FormBuilder의 생성자에 인자를 집어넣으면 필수로 기입해야 하는 항목을 지정할 수 있고,
+email, password, userName과 같은 요소는 순서와 시점에 상관없이 입력을 받을 수 있다.
+또한, 인스턴스는 반드시 FormBuilder의 build 메서드를 이용해서만 만들 수 있다.
+
+Builder pattern을 사용하면 마치 클래스의 Iterator를 만들듯이 Builder를 만들어서 생성과정을 은닉할 수 있다.

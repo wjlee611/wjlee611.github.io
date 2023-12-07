@@ -1,0 +1,101 @@
+---
+title: 'Chain of Responsibility'
+description: 'Chain of Responsibility 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Chain of Responsibility Pattern
+draft: false
+date: 2023-12-07 18:33:40
+---
+
+## 필요성
+
+에러를 핸들링하는 로직을 구현해야 하는 경우, 연쇄적인 try-catch문을 쓰면 코드가 길어질 뿐더러 유지 보수도 어려워진다.
+에러 뿐만 아니라 특정 요청만을 처리해야 하는 핸들러를 달아줄 때, if-else를 사용하면 위와 동일한 문제가 생길 뿐더러, 런타임에서 처리 순서를 변경할 수도 없어진다.
+
+위의 모든 문제를 해결하는 방법이 Chain of Responsibility Pattern 이다.
+
+## Chain of Responsibility
+
+파일의 포멧과 상관없는 파일을 읽는 로직을 개발해보자.
+
+```java:File.java
+public class File {
+  private final String fileName;
+  private final String fileType;
+  private final String filePath;
+
+  public File(String fileName, String fileType, String filePath) {
+    this.fileName = fileName;
+    this.fileType = fileType;
+    this.filePath = filePath;
+  }
+  // getter...
+}
+```
+
+우선 모든 파일을 하나의 인터페이스로 다루기 위해 File 상위 클래스를 만든다.
+
+```java:Handler.java
+public interface Handler {
+  public void setHandler(Handler handler);
+  public void process(File file);
+  public String getHandlerName();
+}
+```
+
+그리고, 핸들링을 연쇄적으로 하기 위해 하나의 인터페이스로 묶어줘야 한다.
+따라서 핸들러 인터페이스를 만들어준다.
+
+```java:TextFileHandler.java {16-19}
+public class TextFileHandler implements Handler {
+  private Handler handler;
+  private String handlerName;
+
+  public TextFileHandler(String handlerName) {
+    this.handlerName = handlerName;
+  }
+
+  @override
+  public void setHandler(Handler handler) {
+    this.handler = handler;
+  }
+
+  @override
+  public void process(File file) {
+    if (file.getFileName().equals("text")) {
+      // process
+    } else if (handler != null) {
+      handler .process(file);
+    } else {
+      throw Exception("Not supported file format");
+    }
+  }
+}
+```
+
+그리고 인터페이스 규격에 맞게 각 파일 포멧에 해당하는 핸들러를 구현한다.
+만약, 포멧이 맞다면, 이 핸들러에서 파일이 처리될 것이고,
+포멧이 맞지 않다면, setHandler로 등록된 다음 핸들러에게 파일의 처리를 인가할 것이다.
+
+```java:ReadFile.java {10-12}
+public class ReadFile {
+  public static void main(String[] args) {
+    File file = new File("asd.mp4", "mp4", "~");
+
+    Handler textHandler = new TextHandler("Text Handler");
+    Handler excelHandler = new ExcelHandler("Excel Handler");
+    Handler audioHandler = new AudioHandler("Audio Handler");
+    Handler videoHandler = new VideoHandler("Video Handler");
+
+    textHandler.setHandler(excelHandler);
+    excelHandler.setHandler(audioHandler);
+    audioHandler.setHandler(videoHandler);
+
+    textHandler.process(file);
+  }
+}
+```
+
+필요에 따라 런타임에 처리 순서를 바꿔줄 수도 있다.

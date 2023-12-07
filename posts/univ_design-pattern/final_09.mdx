@@ -1,0 +1,88 @@
+---
+title: 'Prototype Pattern'
+description: 'Prototype 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Prototype Pattern
+draft: false
+date: 2023-12-07 20:40:02
+---
+
+## 필요성
+
+객체를 만들 때, 상당히 자주 만들어야 하는 객체의 생성방법이 귀찮거나, 오래 걸리는 경우에는 객체를 deep copy 하여 만드는 것이 효율적이다.
+java의 경우에는 clone() 메서드를 이용해서 객체를 deep copy할 수 있다.
+
+하나의 객체(Prototype)을 하드코딩하여 생성하고, 이후의 객체는 이 객체를 복사(일부 수정)하는 방식으로 생성하는 패턴을 prototype pattern 이라고 한다.
+
+## Prototype Pattern
+
+```java:Prototype.java
+public interface Prototype extends Cloneable {
+  public AccessControl clone() throws CloneNotSupportedException;
+}
+```
+
+java에서는 객체를 clone할 때는 Cloneable marker interface를 상속받는 것이 좋다.
+따라서 이 인터페이스를 상속받아 prototype 인터페이스를 만든다.
+(AccessControl은 clone 메서드로 생성할 클래스로, 아래에서 구현예정)
+
+<tip>
+  clone() 메서드는 최상위 클래스 Object 클래스로부터 상속받을 수 있다.
+</tip>
+
+```java:AccessControl.java
+public class AccessControl implements Prototype {
+  private final String controlLevel;
+  private String access;
+
+  public AccessControl(String controlLevel, String access) {
+    this.controlLevel = controlLevel;
+    this.access = access;
+  }
+
+  @override
+  public AccessControl clone() {
+    try {
+      return (AccessControl) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+  // getter...
+}
+```
+
+그리고 prototype pattern으로 생성할 클래스는 Prototype 인터페이스를 구현하여 만든다.
+
+```java:AccessControlProvider.java {13}
+public class AccessControlProvider {
+  private static Map<String, AccessControl> new HashMap<String, AccessControl>();
+  static {
+    map.put("USER", new AccessControl("USER", "DO_WORK"));
+    map.put("ADMIN", new AccessControl("ADMIN", "ADD/REMOVE_USER"));
+    map.put("MANAGER", new AccessControl("MANAGER", "GENERATE/READ_REPORTS"));
+  }
+
+  public static AccessControl getAccessControlObject(String controlLevel) {
+    AccessControl ac = null;
+    ac = map.get(controlLevel);
+    if (ac != null) {
+      return ac.clone();
+    }
+    return null;
+  }
+}
+```
+
+그리고 필요에 따라 객체를 복사하여 사용한다.
+
+<tip>
+  왜 ac가 아닌 ac.clone 을 return 하냐면, 그냥 ac를 return할 경우, 모든 객체가 하나의 ac를 포인팅하게 된다.
+  즉, shallow copy가 일어나게 된다.
+  <br />
+  참고롤 객체를 clone 하더라도, 객체의 멤버 변수로 객체를 갖고있다면, 해당 멤버 객체까지 clone되지는 않는다는 점 주의하자.
+  (A가 멤버 객체 B를 갖고있을 경우, A' = A.clone()을 한다면, A'는 B'를 포인팅하는 것이 아닌, B를 포인팅하게 된다는 것.)
+</tip>

@@ -5,7 +5,84 @@ icon: ''
 image: ''
 tags:
   - Bridge Pattern
-draft: true
-date: 2023-11-25 11:22:36
+draft: false
+date: 2023-12-07 11:17:12
 ---
 
+## 필요성
+
+자동차를 만든다고 가정해보자.
+자동차에는 셀 수 없는 여러 부품들이 종합적으로 들어가서 만들어질텐데, 만약 그 부품이 모두 종속적으로 연결되어 있다면?
+부품 교체는 물론이고, 개발하는 것도 여러 사람이 분산해서 개발하지 못할 것이다.
+
+각 부분을 독립적으로 개발하고, 확장을 유연하게 하기 위해 Bridge pattern을 사용한다.
+
+## Bridge Pattern
+
+```java:Product.java
+public interface Product {
+  public String productName();
+  public void produce();
+}
+```
+
+유연한 확장을 위해 인터페이스를 정의한다.
+자동차의 부품에 해당하는 부분이다.
+
+```java:CentralLocking.java
+public class CentralLocking implements Product {
+  private final String productName;
+
+  public CentralLocking(String productName) {
+    this.productName = productName;
+  }
+  // override methods
+}
+```
+```java:GearLocking.java
+public class GearLocking implements Product {
+  private final String productName;
+
+  public GearLocking(String productName) {
+    this.productName = productName;
+  }
+  // override methods
+}
+```
+
+그리고, 여러 사람이 인터페이스에 맞게 부품을 개발한다.
+
+```java:Car.java {2}
+public abstract class Car {
+  private final Product product;
+  private final String carType;
+
+  public Car(Product product, String carType) {
+    this.product = product;
+    this.carType = carType;
+  }
+
+  public abstract void assemble();
+  public abstract void produceProduct();
+}
+```
+
+그리고 자동차의 뼈대를 만들어준다.
+
+이 때, product를 인터페이스로 만들었기에 유연한 확장과, Car과 독립적으로 product를 개발할 수 있게되는데, 이것이 Bridge pattern 이다.
+
+```java:Motoren.java {8}
+public class Motoren extends Car {
+  public Motoren(Product product, Strint carType) {
+    super(product, carType);
+  }
+
+  @override
+  public void produceProduct() {
+    product .produce();
+    // ...
+  }
+}
+```
+
+그럼 자동차를 조립하는 입장에서는 produce의 내부 구조는 알 필요없이 인터페이스만을 가지고 독립적으로 개발할 수 있게 된다.

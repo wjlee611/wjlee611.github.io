@@ -1,0 +1,113 @@
+---
+title: 'Mediator Pattern'
+description: 'Mediator 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Mediator Pattern
+draft: false
+date: 2023-12-07 18:57:57
+---
+
+## 필요성
+
+여러 군데에 있는 컴포넌트가 서로 의존성을 갖고있다면, 유지보수하기 어려울 것이다.
+그렇다고 해서 도저히 그 의존성을 줄일 방법이 존재하지 않는다면?
+
+Mediator pattern은 모든 컴포넌트가 mediator와 1:1 관계를 갖도록 만들어서 모든 클래스가 종속성있게 복잡하게 구현해야 할 것을 mediator만 의존성을 갖도록 하여 mediator만 복잡하게 구현하도록 하는 방식이다.
+(facade pattern과 유사)
+
+## Mediator Pattern
+
+```java:MachineMediator.java
+public interface MachineMediator {
+  public void start();
+  public void wash();
+  public void open();
+  public void closed();
+  public void on();
+  public void off();
+}
+```
+
+우선 여러 컴포넌트가 수행하는 역할의 집약체인 기계가 수행해야 할 기능들을 mediator 인터페이스로 묶어줍니다.
+
+```java:Colleague.java 
+public class Colleague {
+  public void setMediator(MachineMediator mediator);
+}
+```
+
+그리고, 여러 컴포넌트가 mediator와 종속성을 갖도록 하기 위해 colleague 인터페이스를 만들어줍니다.
+
+```java:Button.java
+public class Button implements Colleague {
+  private MachineMediator mediator;
+
+  @override
+  public void setMediator(MachineMediator mediator) {
+    this.mediator = mediator;
+  }
+
+  public void press() {
+    mediator.start();
+  }
+}
+```
+
+```java:Machine.java
+public class Machine implements Colleague {
+  private MachineMediator mediator; 
+
+  @Override
+  public void setMediator(MachineMediator mediator) {
+    this.mediator = mediator;   
+  }
+
+  public void start() { 
+    mediator.open();
+  }
+  public void wash() { 
+    mediator.wash();
+  }
+}
+```
+
+그리고 각 컴포넌트에서 각각 기계가 수행해야 할 기능을 mediator 인터페이스와 연결해줍니다.
+
+```java:CottonMediator.java
+public class CottonMediator implements MachineMediator {
+  private final Machine machine;
+  private final Heater heater;
+  ...
+  public CottonMediator(Machine machine, Heater heater, ...) {
+    this.machine = machine;
+    this.heater = heater;
+    ...
+  }
+
+  @override
+  public void start() {
+    machine.start();
+  }
+
+  @override
+  public void wach() {
+    motor.startMotor();
+    motor.rotateDrum(700);
+    soilRemoval.low();
+  }
+  // override other methods
+}
+```
+
+그리고 마지막으로 하나의 기계에 모든 컴포넌트를 의존성 주입시키면 된다.
+
+그렇다면 코드 실행 부분에서 모든 컴포넌트에 대해 `setMediator()`로 mediator를 등록시켜주고,
+위 예시의 경우에는 `button.press()` 만 실행시키면 관련된 모든 코드가 연쇄적으로 실행된다.
+
+CottonMediator 만 본다면 facade pattern과 똑같다.
+mediator pattern이 facade와 다른점은 컴포넌트가 setMediator 메서드를 제공하는 하나의 인터페이스로 묶여있다는 점이다.
+
+facade는 facade에서만 컴포넌트를 호출할 수 있었다면,
+mediator는 mediator, 컴포넌트에서 서로를 호출할 수 있다.

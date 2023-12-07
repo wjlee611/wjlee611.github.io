@@ -1,0 +1,153 @@
+---
+title: 'Visitor Pattern'
+description: 'Visitor 디자인 패턴의 필요성과 그 구조에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Visitor Pattern
+draft: false
+date: 2023-12-07 21:03:59
+---
+
+## 필요성
+
+Composite pattern을 사용하면서 동적으로 어떤 기능을 추가해야 하는 경우가 있다.
+
+이 경우 컴포넌트가 visitor의 접근 수락(accept) 하여 기능을 수행하는 패턴을 Visitor Pattern 라고 한다.
+
+## Visitor Pattern
+
+예시를 위해 java코드로 html 파일을 작성하는 코드를 구현한다고 가정해보자.
+
+```java:VisitorPattern.java
+public interface Element {
+  public void accept(Visitor visitor);
+}
+
+public interface Visitor {
+  public void visit(HtmlElement element);
+  public void visit(HtmlParentElement parentElement);
+}
+```
+
+우선 모든 `방문 대상의 클래스`를 하나의 Element 인터페이스로 묶기 위해 인터페이스를 만든다.
+또한, 방문하여 `수정을 가할 클래스`는 Visitor 인터페이스로 묶기게 되는데, 해당 클래스의 visit 메서드는 모든 방문 대상의 구현 클래스를 방문할 수 있어야 한다.
+
+```java:HtmlTag.java
+public abstract class HtmlTag implements Element {
+  public String getTagName() {
+    throw new UnsupportedOperationException();
+  }
+  public void setTagBody(String tagBody) {
+    throw new UnsupportedOperationException();
+  }
+  // ...
+}
+```
+
+`구현할 방문 대상의 클래스`는 모두 HtmlTag를 상속받게 되는데, 이 부분은 Composite pattern과 동일하다.
+
+```java:HtmlElement.java
+public class HtmlElement extends HtmlTag {
+  private String tagName;
+  private String startTag;
+  private String tagBody;
+
+  public HtmlElement(String tagName) {
+    this.tagName = tagName;
+    this.tagName = '';
+  }
+
+  @override
+  public String getTagName() {
+    return tagName;
+  }
+  ...
+  @override
+  public void accept(Visitor visitor) {
+    visitor.visit(this);
+  }
+}
+```
+
+```java:HtmlParentElement.java
+public class HtmlParentElement extends HtmlTag {
+  private String tagName;
+  private String startTag;
+  private List<HtmlTag> childrenTag;
+
+  public HtmlParentElement(String tagName) {
+    this.tagName = tagName;
+    this.childrenTag = new ArrayList<HtmlTag>();
+  }
+
+  @override
+  public String getTagName() {
+    return tagName;
+  }
+  ...
+  @override
+  public void accept(Visitor visitor) {
+    visitor.visit(this);
+  }
+}
+```
+
+`방문 대상의 구현 클래스`를 HtmlTag(Element)를 상속받아 만들어준다.
+이 역시 인터페이스를 HtmlTag로 통일하기 위함이므로 Composite pattern과 동일하다.
+
+```java:ClassNameVisitor.java
+public class ClassNameVisitor implements Visitor {
+  @override
+  public void visit(HtmlElement element) {
+    element.setStartTag(element.getStartTag().replace(">", " class='children'"))
+  }
+
+  @override
+  public void visit(HtmlParentElement element) {
+    element.setStartTag(element.getStartTag().replace(">", " class='parent'"))
+  }
+} 
+```
+
+```java:StyleVisitor.java
+public class StyleVisitor implements Visitor {
+  @override
+  public void visit(HtmlElement element) {
+    element.setStartTag(element.getStartTag().replace(">", " style='width: 46px;'"))
+  }
+
+  @override
+  public void visit(HtmlParentElement element) {
+    element.setStartTag(element.getStartTag().replace(">", " style='width: 58px;'"))
+  }
+} 
+```
+
+그리고 `수정을 가할 클래스`를 Visitor를 상속받아 만들어준다.
+
+```java:.java {12-17}
+psvm() {
+  HtmlTag parentTag = new HtmlParentElement("<div>");
+  HtmlTag cTag1 = new HtmlElement("<p>");
+  HtmlTag cTag2 = new HtmlElement("<p>");
+
+  parentTag.addChildTag(cTag1);
+  parentTag.addChildTag(cTag2);
+
+  Visitor className = new ClassNameVisitor();
+  VIsitor style = new StyleVisitor();
+
+  parentTag.accept(className);
+  parentTag.accept(style);
+  cTag1.accept(className);
+  cTag1.accept(style);
+  cTag2.accept(className);
+  cTag2.accept(style);
+}
+```
+
+그럼 위와 같은 방식으로 HtmlTag를 수정할 수 있다.
+
+이렇게 하면, Composite들은 accept 메서드만 제공할 뿐, 실제 기능의 추가와 변경은 visitor가 수행하게 된다.
+즉, 동적으로 기능을 확장할 수 있고, 기능을 visitor로 분리하여 코드를 관리할 수도 있다.
