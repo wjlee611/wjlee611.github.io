@@ -113,13 +113,10 @@ flat-corner는 $\lambda$의 threshold 크기로 판단합니다.
 
 마지막으로 Harris corner(이하 HC)의 특징을 알아봅시다.
 
-HC는 rotation invariant 합니다.
-즉, 영상을 회전시켜도 동일한 특징점을 찾아낼 수 있습니다.
+HC는 rotation, transition invariant 합니다.
+즉, 영상을 회전시키거나 평행이동 시켜도 동일한 특징점을 찾아낼 수 있습니다.
 
-하지만, transition invariant 하지는 않습니다.
-즉, 영상을 이동시키면 동일한 특징점을 찾아낼 수 없습니다. (그레디언트가 같은데도 말이죠..)
-
-또한, scale invariant 하지도 않습니다.
+하지만, scale invariant 하지는 않습니다.
 ![231127-230442](/posts/final_03/231127-230442.png)
 
 ---
