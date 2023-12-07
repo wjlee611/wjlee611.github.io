@@ -91,21 +91,25 @@ $$
 | $\lambda_1 \approx \lambda_2$ | $\lambda_1 >> \lambda_2$ | $\lambda_1 \approx \lambda_2$ |
 | $\lambda_1$, $\lambda_2$: small | $\lambda_1 << \lambda_2$ | $\lambda_1$, $\lambda_2$: large |
 
-edge는 방향성이 확실하다면 바로 선택할 수 있습니다.
-그렇다면, 얼마나 커야 flat이 아닌 corner로 판단할 수 있을까요?
+그렇다면, 얼마나 커야 corner로 판단할 수 있을까요?
 
 답은 설계하기 나름입니다.
 하지만 나름 설계하는 기준은 있습니다.
 
-![231127-225658](/posts/final_03/231127-225658.png)
+![231207-234701](/posts/final_03/231207-234701.png)
+
+edge-corner는 아래와 같은 기준으로 판단할 수 있습니다.
 
 $$
 \theta = det(M) - \alpha trace(M)^2 = \lambda_1 \lambda_2 - \alpha(\lambda_1 + \lambda_2)^2
 $$
 
-즉, 도심같이 복잡해서 아주 큰 특징들만 검출할 필요가 있는 경우에는 $\alpha$를 크게 두어 크다고 판단하는 threshold를 높입니다.
-반대로, 사막과 같이 미세한 특징도 검출할 필요가 있는 경우에는 $\alpha$를 작게 두어 크다고 판단하는 threshold를 낮춥니다.
-한마디로, $\alpha$를 줄이면 특징점 개수가 줄어듧니다.
+즉, 도심같이 복잡해서 아주 큰 특징들만 검출할 필요가 있는 경우에는 $\alpha$를 크게 두어 크다고 판단하는 threshold를 높입니다. (corner영역을 줄임)
+반대로, 사막과 같이 미세한 특징도 검출할 필요가 있는 경우에는 $\alpha$를 작게 두어 크다고 판단하는 threshold를 낮춥니다. (corner영역을 늘림)
+한마디로 $\alpha$가 커질수록 특징점의 개수가 줄어듧니다.
+
+flat-corner는 $\lambda$의 threshold 크기로 판단합니다.
+한마디로 threshold가 커질수록 특징점의 개수가 줄어듧니다.
 
 마지막으로 Harris corner(이하 HC)의 특징을 알아봅시다.
 
