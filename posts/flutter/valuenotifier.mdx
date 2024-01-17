@@ -1,0 +1,147 @@
+---
+title: 'ValueNotifier'
+description: 'setState 없이 일부분만 리랜더링 할 수 있도록 해주는 ValueNotifier, ValueListenableBuilder 에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - ValueNotifier
+  - ValueListenableBuilder
+draft: false
+date: 2024-01-17 15:08:21
+---
+
+저는 게임이나, 깃허브(깃허브 서비스 그 자체)에서 영감을 많이 얻는 편입니다.
+그 중에 깃허브 앱에서 꼭 따라해보고 싶은 UI가 있었습니다.
+
+![github_app](/posts/valuenotifier/github_app.gif)
+
+바로 AppBar가 스크롤함에 따라 움직이는 애니메이션이죠!
+
+그래서 구글링 해보니까 ScrollController와 `ValueNotifier` 만 있으면 쉽게 구현이 가능했기에 오늘은 이 방법에 대해 적어보려 합니다.
+
+## ValueNotifier
+
+[공식문서](https://api.flutter.dev/flutter/foundation/ValueNotifier-class.html) 의 내용을 요약하면 다음과 같습니다.
+
+> ChangeNotifier를 상속 받았으며, 단일 value를 갖고 있습니다.
+> oldValue와 newValue를 == 연산자를 통해 비교하며,
+> 그 값이 다를 경우 listener 에게 notify 하게 됩니다. (notifyListeners를 호출하는 방식)
+
+따라서 ValueNotifier는 일종의 observer pattern으로 구현되어 있기 떄문에 stateful widget의 상태주기에 의해 제어되지 않을 수 있습니다.
+
+
+
+### ValueListenableBuilder
+
+이 위젯은 필수로 valueListenable 인자를 받게 되어있습니다.
+이 인자로는 반드시 Listenable 을 상속받은 `ValueListenable` 객체를 넘겨주어야 합니다.
+
+이 때, ValueNotifier는 **ValueListenable의 구현체**이기 때문에 ValueNotifier를 인자로 넘겨주면 이 빌더 위젯이 ValueNotifier 상태가 변화하면 알아서 이 부분만 재랜더링 하게 되는 것입니다.
+
+```dart:value_listenable_builder.dart
+@override
+void didUpdateWidget(ValueListenableBuilder<T> oldWidget) {
+  super.didUpdateWidget(oldWidget);
+  if (oldWidget.valueListenable != widget.valueListenable) {
+    oldWidget.valueListenable.removeListener(_valueChanged);
+    value = widget.valueListenable.value;
+    widget.valueListenable.addListener(_valueChanged);
+  }
+}
+
+void _valueChanged() {
+  setState(() { value = widget.valueListenable.value; });
+}
+```
+
+실제로 위젯을 까(?)보면 valueListenable이 변경될 때 마다 stateful 위젯이 재랜더링 됨을 볼 수 있었네요!
+
+---
+
+## 구현
+
+이제 이론적인 내용은 다뤄봤으니 실제로 구현을 해봅시다.
+
+### 컨트롤러
+
+```dart:myinfo_screen.dart {4, 5}
+class _MyinfoScreenState extends State<MyinfoScreen> {
+  static const double _expandedHeight = 250;
+  static const double _appbarHeight = Sizes.size52;
+  late ScrollController _scrollController;
+  final ValueNotifier<double> _titleBottomPadding = ValueNotifier(0);
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+  }
+```
+
+우선 ScrollController와 ValueNotifier를 생성 및 초기화 해줍니다.
+dispose도 잊지 마세요!
+
+### 위젯
+
+```dart:myinfo_screen.dart {6, 19}
+override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: ValueListenableBuilder(
+          valueListenable: _titleBottomPadding,
+          builder: (context, value, child) => AnimatedContainer(
+            duration: const Duration(milliseconds: 1),
+            margin: EdgeInsets.only(
+              bottom: value * 2,
+              top: _appbarHeight,
+            ),
+            child: child,
+          ),
+          child: ... 
+        ),
+      ),
+      body: CustomScrollView(
+        controller: _scrollController,
+      ...
+```
+
+그리고, 스크롤이 되는 위젯에는 ScrollController 객체를 넣어주고,
+스크롤에 따라 애니메이션 되어야 할 부분은 ValueListenableBuilder 위젯으로 구현합니다.
+이 떄, valueListenable의 인자로 ValueNotifier 객체를 넣어줍니다.
+
+<tip>
+  여기서 ValueListenableBuilder의 builder 함수의 파라미터로 넘어오는 value로
+  ValueNotifier에 보관되어있는 value의 값에 접근할 수 있습니다.
+</tip>
+
+### 이벤트 리스너
+
+```dart:myinfo_screen.dart
+void _scrollListener() {
+  const ratio = 0.3;
+  if (_expandedHeight - _appbarHeight * ratio > _scrollController.offset) {
+    _titleBottomPadding.value = 0;
+  }
+  if (_expandedHeight - _appbarHeight * ratio <= _scrollController.offset &&
+      _expandedHeight + _appbarHeight * (1 - ratio) >=
+          _scrollController.offset) {
+    _titleBottomPadding.value =
+        _scrollController.offset - _expandedHeight + _appbarHeight * ratio;
+  }
+  if (_expandedHeight + _appbarHeight * (1 - ratio) <
+      _scrollController.offset) {
+    _titleBottomPadding.value = _appbarHeight;
+  }
+}
+```
+
+마지막으로 ScrollController의 listener 함수를 구현하면 깃허브 앱 AppBar 구현 완료!
+
+### 결과물
+
+![my_app](/posts/valuenotifier/my_app.gif)
+
+라이브러리 안쓰고 직접 구현하고, 코드 분석해보는...
+조금은 성장하는 맛이 있는 시간이었습니다 ㅎㅎ
