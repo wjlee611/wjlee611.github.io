@@ -1,0 +1,290 @@
+---
+title: 'FCM, BLoC으로 관리하기'
+description: 'FCM 응답을 BLoC을 이용해서 상태관리 하는 방법에 대해 알아봅니다.'
+icon: ''
+image: ''
+tags:
+  - Firebase Cloud Message
+  - FCM
+  - BLoC
+  - Cubit
+draft: false
+date: 2024-01-21 22:41:45
+---
+
+FCM을 구현하는데 있어, FCM 세팅이나 수신하는 방법에 대한 글은 많이 봤는데,
+이를 상태관리와 엮어서 소개하는 글은 못봤던거 같습니다.
+
+제 경우에는 코드 스타일을 통일하는 것을 좋아하기 때문에, FCM 역시 상태관리를 이용해서 관리하고 싶었습니다.
+
+또한, 저는 Bloc을 애용하기 때문에, 이번에는 FCM이 수신되면 Bloc을 통해 해당 상태를 관리하는 방법에 대해 알아보려 합니다.
+(정확히는 Cubit을 사용할 예정입니다)
+
+<notice>
+  해당 방식은 부족한 제 지식으로 자체 구현한 방법이기 때문에 다소 어설프게 보일 수 있음을 알려 드립니다.
+</notice>
+
+## FirebaseMessaging
+
+우선 FCM을 사용하기 앞서, FirebaseMessaging 객체를 조금만 살펴봅시다.
+
+앱의 상태(fore/background, terminate)에 따라 FCM 수신 방법이 달라지는데, 각 상태에 따른 수신 방법은 아래와 같습니다.
+
+- **foreground**
+
+    앱이 화면위에서 실행중인 경우에 해당하며, 수신 방법은 다음과 같습니다.
+
+    ```dart:.dart
+      FirebaseMessaging.onMessage.listen(listenFCM);
+
+      void listenFCM(RemoteMessage? message) { ... }
+    ```
+
+- **background**
+
+    앱이 죽지는 않았지만 화면위에 없는 경우. 
+    즉, 태스크매니져 상에만 존재하는 백그라운드 상태에 해당하며, 수신 방법은 다음과 같습니다.
+
+    ```dart:.dart
+      FirebaseMessaging.onMessageOpenedApp.listen(listenFCM);
+
+      void listenFCM(RemoteMessage? message) { ... }
+    ```
+
+- **terminate**
+
+    앱이 완전히 종료된 상태에 해당하며, 수신 방법은 다음과 같습니다.
+
+    ```dart:.dart
+      FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
+      ...
+      Future<void> onBackgroundMessage(RemoteMessage message) async { ... }
+    ```
+
+    <notice>
+      fore/background 와 다르게, terminate의 이벤트핸들러는 static 형식, 또는 전역으로 관리되는 비동기 함수여야 합니다.
+    </notice>
+
+<tip>
+  fore/background의 경우에는 onBlah getter를 이용해서 stream을 반환하고, stream의 listen을 이용해서 stream을 구독합니다.
+  즉, 인스턴스가 존재하는한, 스트림 형식으로 지속해서 FCM과 같은 이벤트를 수신할 수 있습니다.
+  <br />
+  반면에 terminate의 경우에는 앱이 죽은 상태에서의 FCM 수신을 담당하기 때문에, stream 형식으로 지속적으로 수신할 필요가 없습니다.
+</tip>
+
+---
+
+## 구현
+
+### State
+
+Cubit에서 관리할 상태 클래스를 우선 정의합니다.
+
+```dart:fcm_cubit.dart
+class FCMState extends Equatable {
+  final FCMEvent state;
+  final String? body;
+  final FCMDataModel? data;
+
+  const FCMState({
+    this.state = FCMEvent.none,
+    this.body,
+    this.data,
+  });
+
+  factory FCMState.fromBgMessage(RemoteMessage? message) {
+    if (message != null) {
+      if (message.notification != null) {
+        return FCMState(
+          state: FCMEvent.message,
+          body: message.notification!.body,
+          data: FCMDataModel.fromJson(message.data),
+        );
+      }
+    }
+    return const FCMState();
+  }
+
+  @override
+  List<Object?> get props => [
+        state,
+        body,
+        data,
+      ];
+}
+```
+
+`FCMEvent`는 자체 정의한 해당 fcm의 타입을 관리하는 enum 타입입니다. (option)
+
+`body`는 앱의 푸쉬 알림에서 보여지는 문자열을 보관하는 멤버 변수입니다.
+
+<tip>
+  기본 firebase_messaging 에서 FCM이 수신되었을 때, 푸쉬알림은 background, terminate 상태에서만 표시되고, foreground 상태에서는 푸쉬알림이 발생하지 않습니다 (FCM 자체는 수신됨).
+  <br />
+  따라서, body에 데이터를 보관하고, 상태가 변화했을 때 Snackbar 와 같은 방식으로 사용자에게 알려줄 수 있습니다.
+</tip>
+
+`FCMDataModel`은 FCM의 data 객체의 정보를 저장하는 자체 모델입니다.
+이 모델은 int `code`, String `data`을 갖고있습니다.
+`code`는 일종의 응답코드로, code에 따라 FCM이 수신되었을 때의 앱의 동작이 달라지게 됩니다.
+`data`는 직렬화된 객체의 json 문자열으로, code에 따라 파싱 방법이 달라지며, 필요한 정보를 보관합니다.
+
+모든 FCM 이벤트 핸들러는 `RemoteMessage` 객체를 파라미터로 넘겨받기 때문에, 해당 객체를 이용한 생성자를 구현하여 상태를 업데이트 합니다.
+
+### Cubit
+
+다음으로 위에서 언급했던 fore/background는 Cubit 생성자에서 스트림을 구독받도록 구현합니다.
+
+```dart:fcm_cubit.dart
+class FCMCubit extends Cubit<FCMState> {
+  final String _fcmToken;
+
+  FCMCubit(
+    this._fcmToken,
+    RemoteMessage? bgMessage,
+  ) : super(FCMState.fromBgMessage(bgMessage)) {
+    // fcm listening
+    // at foground
+    FirebaseMessaging.onMessage.listen(listenFCM);
+    // at background
+    FirebaseMessaging.onMessageOpenedApp.listen(listenFCM);
+  }
+
+  // token getter
+  String get token => _fcmToken;
+  
+  void listenFCM(RemoteMessage? message) {
+    if (message != null) {
+      emit(FCMState(
+        state: FCMEvent.message,
+        body: message.notification?.body,
+        data: FCMDataModel.fromJson(message.data),
+      ));
+    }
+    emit(const FCMState());
+  }
+}
+```
+
+이렇게 하면 fore/background 에서 FCM이 수신될 때 마다 listenFCM 리스너가 실행이 되고,
+해당 리스너 안에서 emit을 2회 호출하게 됩니다.
+
+첫 번째 emit에서는 위에서 정의한, RemoteMessage의 데이터를 활용해 초기화된 FCMState 상태로 업데이트 되고,
+두 번째 emit에서는 init 상태의 FCMState 상태로 되돌립니다.
+
+두 번째 emit이 필요한 이유는, 동일한 FCM이 2번 연속 수신되는 일도 존재할 수 있기 때문에 상태를 초기화 시켜 2번 모두 정상적으로 수신시켜 주기 위함입니다.
+
+### main
+
+이제 main에서 FCM Token과 권한 요청, terminate의 동작을 정의하도록 합니다.
+
+```dart:main.dart
+RemoteMessage? bgMessage;
+
+void main() async {
+  // flutter ensure initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // request FCM permission
+  FirebaseMessaging.instance.requestPermission(
+    badge: true,
+    alert: true,
+    sound: true,
+  );
+
+  // listening fcm from background
+  FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
+
+  // get fcm token
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
+  debugPrint('FCM Token: $fcmToken');
+
+  runApp(MyApp(
+    fcmToken: fcmToken ?? '',
+    bgMessage: bgMessage,
+  ));
+}
+
+Future<void> _onBackgroundMessage(RemoteMessage message) async {
+  bgMessage = message;
+}
+```
+
+제가 구현했을 때는, terminate 에서의 FCM 수신은 앱의 최초 화면을 제어하는 용도로만 사용했었습니다.
+
+따라서, bgMessage에 임시 보관하여 runApp으로 넘겨주었습니다.
+이후에 별도 처리를 통해 go_router의 initialRoute를 설정하였습니다.
+
+### BlocProvider
+
+이제 FCMCubit을 BuildContext에 등록을 시킵시다.
+
+```dart:main.dart
+class MyApp extends StatelessWidget {
+  final String fcmToken;
+  final RemoteMessage? bgMessage;
+
+  const MyApp({
+    super.key,
+    required this.fcmToken,
+    this.bgMessage,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiRepositoryProvider(
+      providers: [ ... ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => FCMCubit(
+              fcmToken,
+              bgMessage,
+            ),
+            lazy: false,
+          ),
+          ...
+        ],
+        child: const App(),
+      ),
+    );
+  }
+}
+```
+
+이렇게 하면 Bloc을 통해 FCM의 상태를 관리할 준비가 모두 끝납니다.
+
+### 결과물
+
+```dart:.dart {1}
+BlocListener<FCMCubit, FCMState>(
+  listener: (context, state) {
+    if (state.data?.code == "10000") {
+      // action for res code 10000
+    }
+    if (state.data?.code == '10001') {
+      // action for res code 10001
+    }
+    if (state.data?.code == '10002') {
+      // action for res code 10002
+    }
+  },
+  ...
+),
+```
+FCM이 수신될 경우, `BlocListener<FCMCubit, FCMState>`를 통해 FCM에 의한 state에 접근할 수 있고,
+
+```dart:.dart {6}
+BlocProvider(
+  create: (context) => SignalStateBloc(
+    homeSignalBoxRepository: context.read<HomeSignalBoxRepository>(),
+    myIdx: context.read<UserCubit>().state.user!.userIdx!,
+    jwt: context.read<UserCubit>().state.user!.jwt!,
+    fcmToken: context.read<FCMCubit>().token,
+  ),
+),
+```
+
+서버에서 FCM Token이 필요한 경우 `FCMCubit.token`을 통해 해당 클라이언트의 FCM Token을 조회할 수 있습니다.
+
+Bloc으로 FCM까지 관리 완료!
