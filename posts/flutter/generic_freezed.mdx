@@ -1,0 +1,163 @@
+---
+title: 'Freezed에서 제네릭 사용하기'
+description: 'API 응답 모델링에서 사용하면 좋은 Freezed 제네릭 테크닉에 대해 소개합니다.'
+icon: ''
+image: ''
+tags:
+  - Freezed
+  - Generic
+draft: false
+date: 2024-01-24 22:20:19
+---
+
+기존 JsonSerializable로 아래와 같은 응답을 모델링 하였습니다.
+
+```json:json
+{
+  'code': 1000,
+  'message': '성공',
+  'data': { ... }
+}
+```
+
+이런 식으로, code, message(선택) 가 반드시 포함된 응답이 오는 상황이어서
+code, message를 갖고있는 ResModel,
+그리고 ResModel을 상속받아 만든 DataModel 이런식으로 구현하였습니다.
+
+하지만, JsonSerializable로 구현했던 모델들을 Freezed로 마이그레이션 하는 과정에서 문제가 발생했습니다.
+바로, Freezed는 상속이 불가능하다는 점..!
+
+그래서 해결책을 몰색하던 중 ResModel에 제네릭 타입의 data 멤버를 추가하면 어떤가 하는 조언을 받았습니다.
+
+좋은 해결책인거 같기도 하고, 마침 Freezed에 대해 딥하게 알아보고 공부할 겸 이 해결책을 적용해보기로 하였습니다.
+
+## 구현
+
+### DataModel
+
+우선 Data에 해당하는 객체를 모델링 하였습니다.
+
+```dart:diary_model.dart
+part 'diary_model.freezed.dart';
+part 'diary_model.g.dart';
+
+@freezed
+class DiaryModel with _$DiaryModel {
+  factory DiaryModel({
+    @JsonKey(name: 'diaryid') int? id,
+    @JsonKey(name: 'dcontent') String? content,
+    @JsonKey(name: 'dtime') DateTime? time,
+    @JsonKey(name: 'dtag') EEmotion? emotion,
+    @JsonKey(name: 'userid') int? userId,
+    @JsonKey(
+      name: 'openable',
+      fromJson: openableFromJson,
+      toJson: openableToJson,
+    )
+    bool? isOpen,
+  }) = _DiaryModel;
+
+  factory DiaryModel.fromJson(Map<String, dynamic> json) =>
+      _$DiaryModelFromJson(json);
+}
+```
+
+`@JsonKey` 어노테이션을 통해 API에서 전달하는 key와 모델링의 변수명을 변환했습니다.
+또한, openable key의 value가 0 or 1 로 표현하는 bool 형식이라
+0 &rarr; false, 1 &rarr; true 로 변환하는 함수(openableFromJson/ToJson)를 적용하였습니다.
+
+### ResModel
+
+그 다음 공통 응답 모델을 맡을 ResModel을 제네릭으로 모델링합니다.
+
+```dart:res_model.dart
+part 'res_model.freezed.dart';
+part 'res_model.g.dart';
+
+@Freezed(genericArgumentFactories: true)
+class ResModel<T> with _$ResModel<T> {
+  factory ResModel({
+    required int code,
+    String? message,
+    T? data,
+  }) = _ResModel;
+
+  factory ResModel.fromJson(
+    Map<String, dynamic> json,
+    T Function(dynamic json) fromJsonT,
+  ) =>
+      _$ResModelFromJson<T>(json, fromJsonT);
+}
+```
+
+여기서 눈여겨 봐야 할 점은 fromJson의 인자로 fromJsonT 함수를 전달한다는 것입니다.
+
+보통은 fromJson에 json 만 인자로 넘기는데, 제네릭을 포함하는 경우 문제가 발생합니다.
+바로 제네릭에 해당하는 객체의 직렬화, 역직렬화 로직을 프로그램은 모른다는 것이죠.
+
+따라서 해당 로직을 대신 수행할 fromJsonT 함수를 인자로 추가로 받는 것입니다.
+(toJsonT는 freezed에 의해 자동 생성되며, 마찬가지로 toJsonT를 인자로 받습니다.)
+
+이를 build_runner가 알도록 하기 위해 **@freezed** 어노테이션 대신 **@Freezed** 를 사용하며,
+`genericArgumentFactories`을 true로 설정합니다.
+
+### fromJson / toJson
+
+이제 실제로 사용도 해봐야겠죠?
+
+```dart:diray_repository.dart
+var resModel = ResModel<DiaryModel>.fromJson(
+  res.data,
+  (json) => DiaryModel.fromJson(json),
+);
+```
+
+첫 번째 인자로 API의 응답으로 온 json 이 들어갑니다.
+두 번째 인자로는 제네릭 타입의 역직렬화를 수행하는 함수가 들어가는데, 제네릭이 DiaryModel 이므로, DiaryModel.fromJson를 넣어주면 됩니다.
+(참고로 파라미터로 전달되는 json 인자에는 data의 value가 전달됩니다.)
+
+toJson도 살펴봅시다.
+
+```dart:diray_repository.dart
+var reqJson = resModel.toJson(
+  (model) => DiaryModel.fromJson(model),
+);
+```
+
+인자로는 제네릭 타입의 직렬화를 수행하는 함수가 들어가는데, 제네릭이 DiaryModel 이므로, DiaryModel.toJson를 넣어주면 됩니다.
+(참고로 파라미터로 전달되는 model 인자에는 diaryModel의 인스턴스가 전달됩니다.)
+
+### 결과물
+
+data가 없는 경우, 또는 필요 없는 경우에는 아래와 같이 fromJson을 사용할 수 있습니다.
+
+```dart:auth_interceptor.dart
+var res = ResModel.fromJson(response.data, (json) => null);
+if (res.code == 2000) {
+  AuthBlocSingleton.bloc.add(AuthSignoutEvent());
+}
+...
+```
+
+또한, data가 있는 경우, 또는 필요한 경우에는 아래와 같이 fromJson을 사용할 수 있습니다.
+
+```dart:diray_repository.dart
+Dio dio = Dio();
+dio.interceptors.add(AuthInterceptor());
+var res = await dio.get(
+  '/diary',
+  queryParameters: {
+    'emotion': emotion.key,
+  },
+  data: {
+    'page': page,
+  },
+);
+
+var resModel = ResModel<DiaryModel>.fromJson(
+  res.data,
+  (json) => DiaryModel.fromJson(json),
+);
+```
+
+코드의 재사용성을 최대로 하고, 로직간의 의존성을 최소화 하도록 구현해본 유익한 시간이었습니다 ㅎㅎ.
