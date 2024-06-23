@@ -44,3 +44,15 @@ export const zoomIn: Variants = {
     opacity: 0,
   },
 };
+
+export const slideToLeft1: Variants = {
+  view: {
+    transform: "translateX(0)",
+    opacity: 1,
+    transition: { delay: 0.4 },
+  },
+  notView: {
+    transform: "translateX(2rem)",
+    opacity: 0,
+  },
+};

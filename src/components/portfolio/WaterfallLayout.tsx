@@ -84,7 +84,7 @@ export default function WaterfallLayout({
       ) : null}
       {title ? (
         <div className={clsWrapper("top-20 z-10", fixed ? "" : "sticky")}>
-          <div className="flex relative items-center transition-opacity backdrop-blur">
+          <div className="flex relative items-center ml-[2px] transition-opacity backdrop-blur">
             <motion.div
               className={clsWrapper(
                 "w-8 aspect-square rounded-full flex justify-center items-center blur-md absolute top-1 left-0",
@@ -115,7 +115,7 @@ export default function WaterfallLayout({
       ) : null}
       <div className="w-full flex mt-2">
         {fixed ? null : (
-          <div className="w-8 h-auto flex items-start justify-center">
+          <div className="h-auto flex items-start justify-center ml-4">
             <motion.div
               className={clsWrapper(
                 "w-[2px] rounded-full bg-gradient-to-b bg-grad from-[calc(100%-50px)]",
@@ -129,7 +129,7 @@ export default function WaterfallLayout({
           </div>
         )}
         <motion.div
-          className={clsWrapper("py-10 flex flex-1", fixed ? "p-10" : "ml-6")}
+          className={clsWrapper("py-10 flex flex-1", fixed ? "p-10" : "")}
           variants={slideToRight2}
           initial={fixed ? "view" : false}
           animate={fixed || isIntersect ? "view" : "notView"}

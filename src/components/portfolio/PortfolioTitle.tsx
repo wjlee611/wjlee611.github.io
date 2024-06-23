@@ -2,6 +2,7 @@ import Image from "next/image";
 import profileImg from "@/../public/images/woong_profile_image.jpeg";
 import PhotoCard from "./PhotoCard";
 import { AiFillGithub } from "react-icons/ai";
+import { IconBase } from "react-icons/lib";
 
 export default function PortfolioTitle() {
   return (
