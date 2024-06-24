@@ -1,10 +1,10 @@
 import Layout from "@/components/common/Layout";
 import Background from "@/components/portfolio/Background";
-import PortfolioHistory from "@/components/portfolio/PortfolioHistory";
-import PortfolioProjects from "@/components/portfolio/PortfolioProjects";
-import PortfolioStacks from "@/components/portfolio/PortfolioStacks";
 import PortfolioTitle from "@/components/portfolio/PortfolioTitle";
 import WaterfallLayout from "@/components/portfolio/WaterfallLayout";
+import PortfolioHistory from "@/components/portfolio/history/PortfolioHistory";
+import PortfolioProjects from "@/components/portfolio/projects/PortfolioProjects";
+import PortfolioStacks from "@/components/portfolio/stacks/PortfolioStacks";
 
 export default function Home() {
   return (
@@ -14,8 +14,11 @@ export default function Home() {
       <WaterfallLayout title={`Hello world!`} from="blue" to="gold" fixed>
         <PortfolioTitle />
       </WaterfallLayout>
-      <WaterfallLayout title={`Projects`} icon="🏆" from="gold" to="yellow">
+      <WaterfallLayout title={`Projects`} icon="🏆" from="gold" to="gold">
         <PortfolioProjects />
+      </WaterfallLayout>
+      <WaterfallLayout title={`Contributes`} icon="🏆" from="gold" to="yellow">
+        <span className="text-white ml-10">공사중입니다</span>
       </WaterfallLayout>
       <WaterfallLayout title={`Record`} icon="⭐️" from="yellow" to="red" fixed>
         <PortfolioHistory />

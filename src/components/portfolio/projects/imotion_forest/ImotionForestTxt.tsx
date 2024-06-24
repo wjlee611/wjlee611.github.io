@@ -1,4 +1,4 @@
-import SpanLink from "../SpanLink";
+import SpanLink from "../../SpanLink";
 
 export default function ImotionForestTxt() {
   return (

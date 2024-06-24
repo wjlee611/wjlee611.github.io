@@ -1,8 +1,8 @@
 import useObserver from "@/hooks/useObserver";
 import clsWrapper from "@/utils/class-wrapper";
 import Image, { StaticImageData } from "next/image";
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { ReactNode, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { slideToRight1, slideToRight2 } from "@/constants/variants";
 import ProjectDetail from "./ProjectDetail";
 
