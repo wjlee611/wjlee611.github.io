@@ -60,3 +60,12 @@ export const slideToLeft1: Variants = {
     transition: { delay: 0.4 },
   },
 };
+
+export const fade: Variants = {
+  view: {
+    opacity: 1,
+  },
+  notView: {
+    opacity: 0,
+  },
+};

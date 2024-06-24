@@ -4,6 +4,7 @@ import clsWrapper from "@/utils/class-wrapper";
 import useObserver from "@/hooks/useObserver";
 import {
   expandToBottom,
+  fade,
   slideToRight1,
   slideToRight2,
   zoomIn,
@@ -18,6 +19,7 @@ interface IWaterfallLayout {
   from: Color;
   to: Color;
   fixed?: boolean;
+  slide?: boolean;
 }
 
 export default function WaterfallLayout({
@@ -27,6 +29,7 @@ export default function WaterfallLayout({
   from,
   to,
   fixed = false,
+  slide = true,
 }: IWaterfallLayout) {
   const targetRef = useRef<HTMLDivElement>(null);
   const isIntersect = useObserver({
@@ -130,7 +133,7 @@ export default function WaterfallLayout({
         )}
         <motion.div
           className={clsWrapper("py-10 flex flex-1", fixed ? "p-10" : "")}
-          variants={slideToRight2}
+          variants={slide ? slideToRight2 : fade}
           initial={fixed ? "view" : false}
           animate={fixed || isIntersect ? "view" : "notView"}
         >
