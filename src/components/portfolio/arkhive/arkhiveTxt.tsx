@@ -2,7 +2,7 @@ import SpanLink from "../SpanLink";
 
 export default function ArkhiveTxt() {
   return (
-    <span className="flex flex-col text-white space-y-2 bg-black bg-opacity-30 rounded-md p-2">
+    <span className="flex flex-col text-white space-y-2 rounded-md p-2">
       <span>
         오프라인 데이터베이스 기반의 모바일 게임, 명일방주의 정보 애플리케이션
         입니다.

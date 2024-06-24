@@ -84,7 +84,7 @@ export default function WaterfallLayout({
       ) : null}
       {title ? (
         <div className={clsWrapper("top-20 z-10", fixed ? "" : "sticky")}>
-          <div className="flex relative items-center ml-[2px] transition-opacity backdrop-blur">
+          <div className="flex relative items-center transition-opacity backdrop-blur">
             <motion.div
               className={clsWrapper(
                 "w-8 aspect-square rounded-full flex justify-center items-center blur-md absolute top-1 left-0",

@@ -31,13 +31,13 @@ export default function ProjectDetail({
             exit={{ height: 0 }}
             transition={{
               height: {
-                ease: "circOut",
+                ease: "easeInOut",
                 duration: 0.5,
               },
             }}
           >
-            <div className="absolute top-0 left-0 w-5 h-full border-yellow-700 rounded-tr-md rounded-br-md border-t-2 border-r-2 border-b-2"></div>
-            <div className="ml-10 py-10 space-y-5">
+            <div className="absolute top-0 left-0 w-10 h-full border-x-yellow-400 border-y-yellow-500 rounded-tr-md rounded-br-md border-t-2 border-r-2 border-b-2" />
+            <div className="flex flex-col items-start ml-20 py-10 space-y-5">
               {children}
               <button
                 className="border rounded-md px-2"

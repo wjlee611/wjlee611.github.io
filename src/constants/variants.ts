@@ -7,6 +7,7 @@ export const expandToBottom: Variants = {
   },
   notView: {
     height: 0,
+    transition: { delay: 0.2 },
   },
 };
 
@@ -19,6 +20,7 @@ export const slideToRight1: Variants = {
   notView: {
     transform: "translateX(-2rem)",
     opacity: 0,
+    transition: { delay: 0.4 },
   },
 };
 
@@ -31,6 +33,7 @@ export const slideToRight2: Variants = {
   notView: {
     transform: "translateX(-2rem)",
     opacity: 0,
+    transition: { delay: 0.5 },
   },
 };
 
@@ -54,5 +57,6 @@ export const slideToLeft1: Variants = {
   notView: {
     transform: "translateX(2rem)",
     opacity: 0,
+    transition: { delay: 0.4 },
   },
 };

@@ -1,7 +1,7 @@
 import useObserver from "@/hooks/useObserver";
 import clsWrapper from "@/utils/class-wrapper";
 import Image, { StaticImageData } from "next/image";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { slideToRight1, slideToRight2 } from "@/constants/variants";
 import ProjectDetail from "./ProjectDetail";
@@ -23,9 +23,12 @@ export default function ProjectBtn({
   children,
   detailChildren,
 }: IProjectBtn) {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const isIntersect = useObserver({ ref: targetRef });
   const [isExpanded, setIsExpanded] = useState(false);
+  const targetRef = useRef<HTMLDivElement>(null);
+  const isIntersect = useObserver({
+    ref: targetRef,
+    threshold: isExpanded ? 0 : 0.8,
+  });
 
   return (
     <motion.div
@@ -51,12 +54,14 @@ export default function ProjectBtn({
         >
           <div className="flex justify-between">
             <span className="text-white text-2xl font-black">{name}</span>
-            <button
-              className="border rounded-md px-2 mr-4"
-              onClick={() => setIsExpanded((prev) => !prev)}
-            >
-              {isExpanded ? "접기" : "더보기"}
-            </button>
+            {detailChildren != null && (
+              <button
+                className="border rounded-md px-2 mr-4"
+                onClick={() => setIsExpanded((prev) => !prev)}
+              >
+                {isExpanded ? "접기" : "더보기"}
+              </button>
+            )}
           </div>
           <div className="flex space-x-2 my-5">
             <span
