@@ -32,6 +32,10 @@ const history: History[] = [
     body: "Arkhive 서비스 Release",
   },
   {
+    title: "2024/05",
+    body: "immersion 창업팀 합류",
+  },
+  {
     title: "~2025/02",
     body: "학과 수석 3회",
   },

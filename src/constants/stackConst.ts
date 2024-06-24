@@ -26,11 +26,11 @@ export interface ITechConsts {
 // Flutter
 const flutterConst: ITechConsts = {
   favor: 100,
-  skill: 70,
+  skill: 80,
   singleProj: 4,
-  teamProj: 2,
-  releases: 1,
-  contributes: 0,
+  teamProj: 4,
+  releases: 3,
+  contributes: 2,
 };
 // React
 const reactConst: ITechConsts = {
