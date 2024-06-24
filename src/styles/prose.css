@@ -102,7 +102,8 @@
   @apply w-3/4 mx-auto h-[3px] bg-blue-600 bg-opacity-50 rounded-full;
 }
 
-.prose ul {
+.prose ul,
+.prose ol {
   @apply w-full;
 }
 
