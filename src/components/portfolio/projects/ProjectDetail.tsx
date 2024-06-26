@@ -1,4 +1,4 @@
-import { slideToLeft1 } from "@/constants/variants";
+import { fade } from "@/constants/variants";
 import { AnimatePresence, motion } from "framer-motion";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
@@ -18,7 +18,7 @@ export default function ProjectDetail({
   return (
     <motion.div
       className="w-full flex flex-col mt-5"
-      variants={slideToLeft1}
+      variants={fade}
       initial={false}
       animate={isIntersect ? "view" : "notView"}
     >

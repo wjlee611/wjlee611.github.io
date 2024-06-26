@@ -15,12 +15,12 @@ export const slideToRight1: Variants = {
   view: {
     transform: "translateX(0)",
     opacity: 1,
-    transition: { delay: 0.4 },
+    transition: { delay: 0.2 },
   },
   notView: {
     transform: "translateX(-2rem)",
     opacity: 0,
-    transition: { delay: 0.4 },
+    transition: { delay: 0.2 },
   },
 };
 
@@ -28,12 +28,12 @@ export const slideToRight2: Variants = {
   view: {
     transform: "translateX(0)",
     opacity: 1,
-    transition: { delay: 0.5 },
+    transition: { delay: 0.3 },
   },
   notView: {
     transform: "translateX(-2rem)",
     opacity: 0,
-    transition: { delay: 0.5 },
+    transition: { delay: 0.3 },
   },
 };
 
@@ -48,24 +48,13 @@ export const zoomIn: Variants = {
   },
 };
 
-export const slideToLeft1: Variants = {
-  view: {
-    transform: "translateX(0)",
-    opacity: 1,
-    transition: { delay: 0.4 },
-  },
-  notView: {
-    transform: "translateX(2rem)",
-    opacity: 0,
-    transition: { delay: 0.4 },
-  },
-};
-
 export const fade: Variants = {
   view: {
     opacity: 1,
+    transition: { delay: 0.2 },
   },
   notView: {
     opacity: 0,
+    transition: { delay: 0.2 },
   },
 };

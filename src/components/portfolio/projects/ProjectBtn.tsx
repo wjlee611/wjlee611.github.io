@@ -27,7 +27,7 @@ export default function ProjectBtn({
   const targetRef = useRef<HTMLDivElement>(null);
   const isIntersect = useObserver({
     ref: targetRef,
-    threshold: isExpanded ? 0 : 0.8,
+    threshold: isExpanded ? 0 : 0.6,
   });
 
   return (

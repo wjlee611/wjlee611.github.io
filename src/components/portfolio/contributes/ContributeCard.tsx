@@ -11,7 +11,10 @@ interface IContributeCard {
 
 export default function ContributeCard({ contribute }: IContributeCard) {
   const targetRef = useRef<HTMLDivElement>(null);
-  const isIntersect = useObserver({ ref: targetRef, threshold: 1 });
+  const isIntersect = useObserver({
+    ref: targetRef,
+    threshold: 0.6,
+  });
 
   return (
     <motion.div

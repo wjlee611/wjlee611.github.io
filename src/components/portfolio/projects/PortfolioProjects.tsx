@@ -22,7 +22,7 @@ import KwangSaengTxt from "./kwang_saeng/KwangSaengTxt";
 
 export default function PortfolioProjects() {
   return (
-    <div className="space-y-20">
+    <div className="space-y-20 overflow-clip">
       <ProjectBtn
         image={iconKwangSaeng}
         name="광생"
